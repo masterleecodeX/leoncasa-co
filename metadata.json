@@ -1,6 +1,6 @@
 {
   "name": "leoncasa&co.",
-  "description": "furniture website",
+  "description": "furniture selling",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
