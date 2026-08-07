@@ -1,10 +1,11 @@
 import FloatingActionMenu from "@/components/ui/floating-action-menu"
 import { Settings, User, LogOut } from "lucide-react";
 
-export const FloatingActionMenuDemo = ({ onLogout }: { onLogout?: () => void }) => {
+export const FloatingActionMenuDemo = ({ onLogout, userPhotoUrl }: { onLogout?: () => void, userPhotoUrl?: string | null }) => {
     return (
           <FloatingActionMenu
           className="relative z-50"
+          userPhotoUrl={userPhotoUrl}
           options={[
             {
               label: "Account",

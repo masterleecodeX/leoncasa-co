@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type FloatingActionMenuProps = {
@@ -13,11 +13,13 @@ options: {
   Icon?: React.ReactNode;
 }[];
 className?: string;
+userPhotoUrl?: string | null;
 };
 
 const FloatingActionMenu = ({
 options,
 className,
+userPhotoUrl,
 }: FloatingActionMenuProps) => {
 const [isOpen, setIsOpen] = useState(false);
 
@@ -29,7 +31,9 @@ return (
   <div className={cn("relative", className)}>
     <Button
       onClick={toggleMenu}
-      className="w-10 h-10 rounded-full bg-[#11111198] hover:bg-[#111111d1] shadow-[0_0_20px_rgba(0,0,0,0.2)] "
+      className={cn(
+        "w-7 h-7 rounded-full bg-[#11111198] hover:bg-[#111111d1] shadow-[0_0_15px_rgba(0,0,0,0.15)] p-0 overflow-hidden flex items-center justify-center text-white border-0"
+      )}
     >
       <motion.div
         animate={{ rotate: isOpen ? 45 : 0 }}
@@ -40,8 +44,15 @@ return (
           stiffness: 300,
           damping: 20,
         }}
+        className="flex items-center justify-center w-full h-full"
       >
-        <Plus className="w-6 h-6" />
+        {isOpen ? (
+          <Plus className="w-4 h-4" />
+        ) : userPhotoUrl ? (
+          <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer" />
+        ) : (
+          <User className="w-4 h-4" />
+        )}
       </motion.div>
     </Button>
 

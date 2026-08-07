@@ -23,7 +23,7 @@ const AppleIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: { onBack?: () => void; onSignUpSuccess?: () => void; initialIsLogin?: boolean }) {
+export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: { onBack?: () => void; onSignUpSuccess?: (email: string, photoURL?: string | null) => void; initialIsLogin?: boolean }) {
   const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [is2FA, setIs2FA] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -110,7 +110,7 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
       
       // On successful login, bypass 2FA for simplicity as requested "simple basic logic"
       setErrorMessage("");
-      onSignUpSuccess?.();
+      onSignUpSuccess?.(email);
       return;
       
     } else {
@@ -302,7 +302,7 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                     onClick={() => {
                       const enteredCode = twoFACode.join("");
                       if (enteredCode === generatedVerificationCode) {
-                        onSignUpSuccess?.();
+                        onSignUpSuccess?.(email);
                       } else {
                         alert("Invalid verification code. Please try again.");
                       }
@@ -335,9 +335,9 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                 <button 
                   onClick={async () => {
                     try {
-                      await signInWithPopup(auth, googleProvider);
+                      const result = await signInWithPopup(auth, googleProvider);
                       setErrorMessage("");
-                      onSignUpSuccess?.();
+                      onSignUpSuccess?.(result.user.email || "", result.user.photoURL);
                     } catch (error: any) {
                       setErrorMessage(error.message || "Failed to sign in with Google.");
                     }

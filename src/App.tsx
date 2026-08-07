@@ -15,14 +15,22 @@ import { FloatingActionMenuDemo } from '@/components/ui/demo';
 import { AnimatePresence, motion } from 'motion/react';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'donate' | 'signup' | 'login'>(() => {
-    const saved = localStorage.getItem('currentView');
-    return (saved as 'home' | 'donate' | 'signup' | 'login') || 'home';
-  });
+  const [currentView, setCurrentView] = useState<'home' | 'donate' | 'signup' | 'login' | 'admin'>('home');
 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem('isLoggedIn') === 'true';
   });
+  
+  const [userEmail, setUserEmail] = useState(() => {
+    return localStorage.getItem('userEmail') || '';
+  });
+
+  const [userPhotoUrl, setUserPhotoUrl] = useState(() => {
+    return localStorage.getItem('userPhotoUrl') || '';
+  });
+
+  const adminEmails = ["kannyio08@gmail.com", "mleongholami08@gmail.com"];
+  const isAdmin = isLoggedIn && adminEmails.includes(userEmail);
 
   const hero10Values = {
     title: 'Build faster interfaces',
@@ -56,12 +64,10 @@ export default function App() {
   } satisfies Hero10Props;
 
   React.useEffect(() => {
-    localStorage.setItem('currentView', currentView);
-  }, [currentView]);
-
-  React.useEffect(() => {
     localStorage.setItem('isLoggedIn', String(isLoggedIn));
-  }, [isLoggedIn]);
+    localStorage.setItem('userEmail', userEmail);
+    localStorage.setItem('userPhotoUrl', userPhotoUrl);
+  }, [isLoggedIn, userEmail, userPhotoUrl]);
 
   React.useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -86,8 +92,10 @@ export default function App() {
       case 'signup':
         return (
           <motion.div key="signup" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="min-h-screen">
-            <SignUpPage onBack={() => setCurrentView('donate')} initialIsLogin={false} onSignUpSuccess={() => {
+            <SignUpPage onBack={() => setCurrentView('donate')} initialIsLogin={false} onSignUpSuccess={(email, photoUrl) => {
               setIsLoggedIn(true);
+              setUserEmail(email);
+              setUserPhotoUrl(photoUrl || '');
               setCurrentView('home');
             }} />
           </motion.div>
@@ -95,8 +103,10 @@ export default function App() {
       case 'login':
         return (
           <motion.div key="login" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="min-h-screen">
-            <SignUpPage onBack={() => setCurrentView('donate')} initialIsLogin={true} onSignUpSuccess={() => {
+            <SignUpPage onBack={() => setCurrentView('donate')} initialIsLogin={true} onSignUpSuccess={(email, photoUrl) => {
               setIsLoggedIn(true);
+              setUserEmail(email);
+              setUserPhotoUrl(photoUrl || '');
               setCurrentView('home');
             }} />
           </motion.div>
@@ -109,7 +119,11 @@ export default function App() {
                 <NavigationMenuDemo onHome={() => setCurrentView('home')} />
                 <div className="flex items-center gap-3">
                   {isLoggedIn ? (
-                    <FloatingActionMenuDemo onLogout={() => setIsLoggedIn(false)} />
+                    <FloatingActionMenuDemo userPhotoUrl={userPhotoUrl} onLogout={() => {
+                      setIsLoggedIn(false);
+                      setUserEmail('');
+                      setUserPhotoUrl('');
+                    }} />
                   ) : (
                     <>
                       <button 
@@ -142,7 +156,11 @@ export default function App() {
                 <NavigationMenuDemo onHome={() => setCurrentView('home')} />
                 <div className="flex items-center gap-3">
                   {isLoggedIn ? (
-                    <FloatingActionMenuDemo onLogout={() => setIsLoggedIn(false)} />
+                    <FloatingActionMenuDemo userPhotoUrl={userPhotoUrl} onLogout={() => {
+                      setIsLoggedIn(false);
+                      setUserEmail('');
+                      setUserPhotoUrl('');
+                    }} />
                   ) : (
                     <>
                       <button 
