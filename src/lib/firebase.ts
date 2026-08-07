@@ -15,3 +15,8 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
+
+import { signInWithPopup } from "firebase/auth";
+export const signInWithGoogle = async () => {
+  return await signInWithPopup(auth, googleProvider);
+};

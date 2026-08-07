@@ -3,8 +3,8 @@
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
+
+import { auth, googleProvider, signInWithGoogle } from "@/lib/firebase";
 
 export const MEDIA_URL = "https://cdn.phototourl.com/free/2026-08-02-d4ecf953-4dd8-47a0-9043-284111be4877.png";
 
@@ -335,11 +335,15 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                 <button 
                   onClick={async () => {
                     try {
-                      const result = await signInWithPopup(auth, googleProvider);
+                      const result = await signInWithGoogle();
                       setErrorMessage("");
                       onSignUpSuccess?.(result.user.email || "", result.user.photoURL);
                     } catch (error: any) {
-                      setErrorMessage(error.message || "Failed to sign in with Google.");
+                      if (error.message && (error.message.includes('closing') || error.message.includes('IndexedDB') || error.message.includes('third-party') || error.message.includes('argument-error'))) {
+                        setErrorMessage("Authentication is blocked in this preview iframe. Please open the app in a new tab (using the button in the top right) to sign in with Google.");
+                      } else {
+                        setErrorMessage(error.message || "Failed to sign in with Google.");
+                      }
                     }
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-[15px] font-normal text-black"
