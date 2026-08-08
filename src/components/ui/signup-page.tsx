@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } from "firebase/auth";
 
 
 
@@ -107,30 +107,29 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
   };
 
   
-  const handleForgotPassword = async () => {
+    const handleForgotPassword = async () => {
     if (forgotPasswordStep === 1) {
       if (!email) {
         setErrorMessage("Please enter your email.");
         return;
       }
+      setIsLoading(true);
       try {
         await sendPasswordResetEmail(auth, email);
         setErrorMessage("");
-        alert("Password reset email sent. Please check your inbox.");
         setForgotPasswordStep(0);
         setIsLogin(true);
+        alert("Password reset email sent! Check your inbox.");
       } catch (error: any) {
-        if (error.code === 'auth/user-not-found') {
-          setErrorMessage("Account not found.");
-        } else {
-          setErrorMessage("Failed to send reset email.");
-        }
+        setErrorMessage(error.message);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const handleSubmit = async () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
     
     if (isLogin) {
@@ -142,20 +141,13 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
         setErrorMessage("Please enter a valid email address.");
         return;
       }
-      
       try {
         await signInWithEmailAndPassword(auth, email, password);
         setErrorMessage("");
         onSignUpSuccess?.(email);
       } catch (error: any) {
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-          setErrorMessage("Account not found or incorrect password.");
-        } else {
-          setErrorMessage("Failed to log in.");
-        }
+        setErrorMessage(error.message || "Failed to log in.");
       }
-      return;
-      
     } else {
       if (!firstName || !lastName || !email || !password || !confirmPassword) {
         setErrorMessage("Please fill in all fields.");
@@ -177,17 +169,15 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
         setErrorMessage("You must agree to the Terms and Services and Privacy Policy.");
         return;
       }
-      
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, {
+          displayName: `${firstName} ${lastName}`
+        });
         setErrorMessage("");
         onSignUpSuccess?.(email);
       } catch (error: any) {
-        if (error.code === 'auth/email-already-in-use') {
-          setErrorMessage("An account with this email already exists.");
-        } else {
-          setErrorMessage("Failed to create account.");
-        }
+        setErrorMessage(error.message || "Failed to sign up.");
       }
     }
   };
