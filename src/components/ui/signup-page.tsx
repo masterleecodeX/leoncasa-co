@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -111,55 +113,18 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
         setErrorMessage("Please enter your email.");
         return;
       }
-      const usersStr = localStorage.getItem('users');
-      const users = usersStr ? JSON.parse(usersStr) : [];
-      const user = users.find((u: any) => u.email === email);
-      if (!user) {
-        setErrorMessage("Account not found.");
-        return;
-      }
-      setErrorMessage("");
-      const code = Math.floor(10000 + Math.random() * 90000).toString();
-      setGeneratedVerificationCode(code);
-      setCountdown(60);
-      setIsCodeExpired(false);
-      console.log("Forgot Password Code:", code);
       try {
-        await fetch('/api/send-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, code })
-        });
-      } catch (err) {}
-      setForgotPasswordStep(2);
-    } else if (forgotPasswordStep === 3) {
-      if (!password || password !== confirmPassword) {
-        setErrorMessage("Passwords do not match or are empty.");
-        return;
-      }
-      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-      if (!passwordRegex.test(password)) {
-        setErrorMessage("Password must be at least 8 characters and contain at least one uppercase letter, one number, and one special character.");
-        return;
-      }
-      
-      const hashPassword = async (pwd: string) => {
-        const msgUint8 = new TextEncoder().encode(pwd);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-      };
-      
-      const usersStr = localStorage.getItem('users');
-      const users = usersStr ? JSON.parse(usersStr) : [];
-      const userIndex = users.findIndex((u: any) => u.email === email);
-      if (userIndex > -1) {
-        const hashedPassword = await hashPassword(password);
-        users[userIndex].password = hashedPassword;
-        localStorage.setItem('users', JSON.stringify(users));
+        await sendPasswordResetEmail(auth, email);
         setErrorMessage("");
+        alert("Password reset email sent. Please check your inbox.");
         setForgotPasswordStep(0);
         setIsLogin(true);
+      } catch (error: any) {
+        if (error.code === 'auth/user-not-found') {
+          setErrorMessage("Account not found.");
+        } else {
+          setErrorMessage("Failed to send reset email.");
+        }
       }
     }
   };
@@ -167,18 +132,6 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
   const handleSubmit = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-    
-    // Hash password for security
-    const hashPassword = async (pwd: string) => {
-      const msgUint8 = new TextEncoder().encode(pwd);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-    };
-    
-    // Get existing users from localStorage
-    const usersStr = localStorage.getItem('users');
-    const users = usersStr ? JSON.parse(usersStr) : [];
     
     if (isLogin) {
       if (!email || !password) {
@@ -190,21 +143,17 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
         return;
       }
       
-      const user = users.find((u: any) => u.email === email);
-      if (!user) {
-        setErrorMessage("Account not found. Please sign up.");
-        return;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        setErrorMessage("");
+        onSignUpSuccess?.(email);
+      } catch (error: any) {
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+          setErrorMessage("Account not found or incorrect password.");
+        } else {
+          setErrorMessage("Failed to log in.");
+        }
       }
-      
-      const hashedPassword = await hashPassword(password);
-      if (user.password !== hashedPassword) {
-        setErrorMessage("Incorrect password.");
-        return;
-      }
-      
-      // On successful login, bypass 2FA for simplicity as requested "simple basic logic"
-      setErrorMessage("");
-      onSignUpSuccess?.(email);
       return;
       
     } else {
@@ -229,43 +178,18 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
         return;
       }
       
-      const existingUser = users.find((u: any) => u.email === email);
-      if (existingUser) {
-        setErrorMessage("An account with this email already exists.");
-        return;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        setErrorMessage("");
+        onSignUpSuccess?.(email);
+      } catch (error: any) {
+        if (error.code === 'auth/email-already-in-use') {
+          setErrorMessage("An account with this email already exists.");
+        } else {
+          setErrorMessage("Failed to create account.");
+        }
       }
-      
-      // Save new user with hashed password
-      const hashedPassword = await hashPassword(password);
-      users.push({ firstName, lastName, email, password: hashedPassword });
-      localStorage.setItem('users', JSON.stringify(users));
     }
-    
-    setErrorMessage("");
-    
-    // Generate 5-digit verification code for signup
-    const code = Math.floor(10000 + Math.random() * 90000).toString();
-    setGeneratedVerificationCode(code);
-    setCountdown(60);
-    setIsCodeExpired(false);
-    
-    try {
-      // Send the code to the user's email via the backend
-      const response = await fetch('/api/send-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code })
-      });
-      
-      if (!response.ok) {
-        console.error("Failed to send verification code");
-        // We'll still proceed to 2FA view so they can see the console fallback in development
-      }
-    } catch (err) {
-      console.error("Error connecting to API:", err);
-    }
-
-    setIs2FA(true);
   };
 
   return (

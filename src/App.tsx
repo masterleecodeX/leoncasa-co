@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Hero10, type Hero10Props } from '@/components/ui/hero-10';
 import { SignUpPage, MEDIA_URL } from '@/components/ui/signup-page';
 import { HomeView } from '@/views/HomeView';
 import { DonateView } from '@/views/DonateView';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 
 import { AnimatePresence, motion } from 'motion/react';
@@ -61,17 +63,32 @@ export default function App() {
     },
   } satisfies Hero10Props;
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+        setUserEmail(user.email || '');
+        setUserPhotoUrl(user.photoURL || '');
+      } else {
+        setIsLoggedIn(false);
+        setUserEmail('');
+        setUserPhotoUrl('');
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem('isLoggedIn', String(isLoggedIn));
     localStorage.setItem('userEmail', userEmail);
     localStorage.setItem('userPhotoUrl', userPhotoUrl);
   }, [isLoggedIn, userEmail, userPhotoUrl]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [currentView, isLoggedIn]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Preload the sign-up page media to eliminate latency
     if (MEDIA_URL.match(/\.(mp4|webm|ogg)$/i)) {
       const link = document.createElement('link');
@@ -92,7 +109,12 @@ export default function App() {
     onHome: () => setCurrentView('home'),
     onLogin: () => setCurrentView('login'),
     onSignup: () => setCurrentView('signup'),
-    onLogout: () => {
+    onLogout: async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Error signing out: ", error);
+      }
       setIsLoggedIn(false);
       setUserEmail('');
       setUserPhotoUrl('');
