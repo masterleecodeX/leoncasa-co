@@ -9,7 +9,8 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 export const MEDIA_URL =
@@ -151,58 +152,28 @@ export function SignUpPage({
         setErrorMessage("Please enter your email.");
         return;
       }
-      const usersStr = localStorage.getItem("users");
-      const users = usersStr ? JSON.parse(usersStr) : [];
-      const user = users.find((u: any) => u.email === email);
-      if (!user) {
-        setErrorMessage("Account not found.");
-        return;
-      }
-      setErrorMessage("");
-      const code = Math.floor(10000 + Math.random() * 90000).toString();
-      setGeneratedVerificationCode(code);
-      setCountdown(60);
-      setIsCodeExpired(false);
-      console.log("Forgot Password Code:", code);
       try {
-        await fetch("/api/send-code", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, code }),
-        });
-      } catch (err) {}
-      setForgotPasswordStep(2);
-    } else if (forgotPasswordStep === 3) {
-      if (!password || password !== confirmPassword) {
-        setErrorMessage("Passwords do not match or are empty.");
-        return;
-      }
-      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-      if (!passwordRegex.test(password)) {
-        setErrorMessage(
-          "Password must be at least 8 characters and contain at least one uppercase letter, one number, and one special character.",
-        );
-        return;
-      }
-
-      const hashPassword = async (pwd: string) => {
-        const msgUint8 = new TextEncoder().encode(pwd);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-      };
-
-      const usersStr = localStorage.getItem("users");
-      const users = usersStr ? JSON.parse(usersStr) : [];
-      const userIndex = users.findIndex((u: any) => u.email === email);
-      if (userIndex > -1) {
-        const hashedPassword = await hashPassword(password);
-        users[userIndex].password = hashedPassword;
-        localStorage.setItem("users", JSON.stringify(users));
+        await sendPasswordResetEmail(auth, email);
         setErrorMessage("");
+        alert("Password reset email sent. Please check your inbox.");
         setForgotPasswordStep(0);
         setIsLogin(true);
+      } catch (err: any) {
+        console.error(err);
+        if (err.code === "auth/user-not-found") {
+          setErrorMessage("Account not found.");
+        } else {
+          setErrorMessage(err.message || "Failed to send reset email.");
+        }
       }
+    } else if (forgotPasswordStep === 2) {
+      // Step 2 and 3 are handled by Firebase directly via email link, so we don't need them
+      setForgotPasswordStep(0);
+      setIsLogin(true);
+    } else if (forgotPasswordStep === 3) {
+      // Step 2 and 3 are handled by Firebase directly via email link, so we don't need them
+      setForgotPasswordStep(0);
+      setIsLogin(true);
     }
   };
 
@@ -284,6 +255,13 @@ export function SignUpPage({
       );
     } catch (e: any) {
       console.error(e);
+      if (
+        e.code === "auth/cancelled-popup-request" ||
+        e.code === "auth/popup-closed-by-user"
+      ) {
+        // User closed the popup, no need to show an error
+        return;
+      }
       setErrorMessage(e.message || "An error occurred with Google Sign In.");
     }
   };

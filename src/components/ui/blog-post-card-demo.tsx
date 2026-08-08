@@ -7,7 +7,19 @@ import { db } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
 export function DemoOne({ onViewPost }: { onViewPost?: (post?: any) => void }) {
-  const [customPosts, setCustomPosts] = React.useState<ArticleCardProps[]>([]);
+  const [customPosts, setCustomPosts] = React.useState<ArticleCardProps[]>(() => {
+    try {
+      const cached = localStorage.getItem("cachedPosts");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return parsed.map((p: any) => ({
+          ...p,
+          publishedAt: p.publishedAt ? new Date(p.publishedAt) : new Date(),
+        }));
+      }
+    } catch (e) {}
+    return [];
+  });
 
   React.useEffect(() => {
     const q = query(collection(db, "posts"), orderBy("publishedAt", "desc"));
@@ -15,46 +27,28 @@ export function DemoOne({ onViewPost }: { onViewPost?: (post?: any) => void }) {
       const posts = snapshot.docs.map((doc) => {
         const data = doc.data();
         return {
-          ...data,
           id: doc.id,
+          headline: data.headline || "Untitled",
+          excerpt: data.excerpt || "",
+          images: data.images || [],
+          tag: data.tag || "",
+          readingTime: data.readingTime || 0,
+          writer: data.writer || "Unknown",
+          layout: data.layout || "horizontal",
           publishedAt: data.publishedAt?.toDate
             ? data.publishedAt.toDate()
             : new Date(),
         } as ArticleCardProps;
       });
       setCustomPosts(posts);
+      try {
+        localStorage.setItem("cachedPosts", JSON.stringify(posts));
+      } catch (e) {}
     });
     return () => unsubscribe();
   }, []);
 
-  const defaultPosts: ArticleCardProps[] = [
-    {
-      headline: "Shaping Tomorrow: AI & The Web",
-      excerpt:
-        "From automated coding assistants to intelligent design workflows, AI is redefining how developers build and ship modern applications.",
-      cover:
-        "https://framerusercontent.com/images/HeBZhwOVxQyFU36pkfQyEMExIOg.png?width=8192&height=4608",
-      tag: "Innovation",
-      readingTime: 420,
-      writer: "John Doe",
-      publishedAt: new Date("2025-09-01"),
-      layout: "vertical",
-    },
-    {
-      layout: "horizontal",
-      headline: "The Future of UI Components",
-      excerpt:
-        "Discover how AI and modern tooling are transforming the way we build, share, and maintain UI components across the web. The future of front-end is changing rapidly.",
-      cover:
-        "https://framerusercontent.com/images/HeBZhwOVxQyFU36pkfQyEMExIOg.png?width=8192&height=4608",
-      tag: "Design",
-      readingTime: 300,
-      writer: "Jane Smith",
-      publishedAt: new Date("2025-09-15"),
-    },
-  ];
-
-  const allPosts = [...customPosts, ...defaultPosts];
+  const allPosts = customPosts;
 
   return (
     <div className="flex flex-col w-full justify-start px-4 md:px-8 lg:px-12 xl:px-16 bg-transparent mt-12 max-w-[1600px] mx-auto gap-8">

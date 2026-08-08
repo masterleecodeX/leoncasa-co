@@ -12,7 +12,7 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isSignedIn() && (request.auth.token.email == 'kannyio08@gmail.com' || request.auth.token.email == 'mleongholami08@gmail.com');
+      return isSignedIn();
     }
 
     function incoming() {
@@ -25,10 +25,10 @@ service cloud.firestore {
 
     function isValidPost(data) {
       return data.keys().hasAll(['headline', 'excerpt', 'images', 'layout', 'publishedAt']) &&
-             data.headline is string && data.headline.size() > 0 && data.headline.size() <= 200 &&
-             data.excerpt is string && data.excerpt.size() > 0 && data.excerpt.size() <= 1000 &&
-             data.images is list && data.images.size() > 0 && data.images.size() <= 10 &&
-             data.layout is string && (data.layout == 'vertical' || data.layout == 'horizontal') &&
+             data.headline is string &&
+             data.excerpt is string &&
+             data.images is list &&
+             data.layout is string &&
              data.publishedAt is timestamp;
     }
 
