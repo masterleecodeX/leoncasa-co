@@ -4,7 +4,7 @@ import React, { useState, useRef } from "react";
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-import { auth, googleProvider, signInWithGoogle } from "@/lib/firebase";
+
 
 export const MEDIA_URL = "https://cdn.phototourl.com/free/2026-08-02-d4ecf953-4dd8-47a0-9043-284111be4877.png";
 
@@ -26,6 +26,10 @@ const AppleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: { onBack?: () => void; onSignUpSuccess?: (email: string, photoURL?: string | null) => void; initialIsLogin?: boolean }) {
   const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [is2FA, setIs2FA] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [forgotPasswordStep, setForgotPasswordStep] = useState(0);
+  const [countdown, setCountdown] = useState(0);
+  const [isCodeExpired, setIsCodeExpired] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -38,6 +42,36 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
   const [twoFACode, setTwoFACode] = useState(["", "", "", "", ""]);
   const [generatedVerificationCode, setGeneratedVerificationCode] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (countdown === 0 && (is2FA || forgotPasswordStep === 2)) {
+      setIsCodeExpired(true);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown, is2FA, forgotPasswordStep]);
+
+  const handleResendCode = async () => {
+    setIsLoading(true);
+    try {
+      const code = Math.floor(10000 + Math.random() * 90000).toString();
+      setGeneratedVerificationCode(code);
+      setCountdown(60);
+      setIsCodeExpired(false);
+      setErrorMessage("");
+      await fetch('/api/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCodeChange = (index: number, value: string) => {
     // only allow digits (optional, but good practice)
@@ -67,6 +101,66 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && !twoFACode[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  
+  const handleForgotPassword = async () => {
+    if (forgotPasswordStep === 1) {
+      if (!email) {
+        setErrorMessage("Please enter your email.");
+        return;
+      }
+      const usersStr = localStorage.getItem('users');
+      const users = usersStr ? JSON.parse(usersStr) : [];
+      const user = users.find((u: any) => u.email === email);
+      if (!user) {
+        setErrorMessage("Account not found.");
+        return;
+      }
+      setErrorMessage("");
+      const code = Math.floor(10000 + Math.random() * 90000).toString();
+      setGeneratedVerificationCode(code);
+      setCountdown(60);
+      setIsCodeExpired(false);
+      console.log("Forgot Password Code:", code);
+      try {
+        await fetch('/api/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code })
+        });
+      } catch (err) {}
+      setForgotPasswordStep(2);
+    } else if (forgotPasswordStep === 3) {
+      if (!password || password !== confirmPassword) {
+        setErrorMessage("Passwords do not match or are empty.");
+        return;
+      }
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+      if (!passwordRegex.test(password)) {
+        setErrorMessage("Password must be at least 8 characters and contain at least one uppercase letter, one number, and one special character.");
+        return;
+      }
+      
+      const hashPassword = async (pwd: string) => {
+        const msgUint8 = new TextEncoder().encode(pwd);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+      };
+      
+      const usersStr = localStorage.getItem('users');
+      const users = usersStr ? JSON.parse(usersStr) : [];
+      const userIndex = users.findIndex((u: any) => u.email === email);
+      if (userIndex > -1) {
+        const hashedPassword = await hashPassword(password);
+        users[userIndex].password = hashedPassword;
+        localStorage.setItem('users', JSON.stringify(users));
+        setErrorMessage("");
+        setForgotPasswordStep(0);
+        setIsLogin(true);
+      }
     }
   };
 
@@ -152,6 +246,8 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
     // Generate 5-digit verification code for signup
     const code = Math.floor(10000 + Math.random() * 90000).toString();
     setGeneratedVerificationCode(code);
+    setCountdown(60);
+    setIsCodeExpired(false);
     
     try {
       // Send the code to the user's email via the backend
@@ -176,13 +272,13 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
     <div className="flex w-full min-h-screen bg-white font-sans text-black">
       {/* Left Section */}
       <div className="hidden md:flex md:w-1/2 bg-black text-white flex-col justify-between p-8 relative overflow-hidden">
-        {(onBack || is2FA) && (
+        {(onBack || is2FA || forgotPasswordStep > 0) && (
           <button
-            onClick={() => is2FA ? setIs2FA(false) : onBack?.()}
+            onClick={() => { if (forgotPasswordStep > 0) { setForgotPasswordStep(0); } else if (is2FA) { setIs2FA(false); } else { onBack?.(); } }}
             className="absolute top-8 left-8 flex items-center text-sm font-medium text-gray-400 hover:text-white transition-colors z-10"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
-            {is2FA ? "Back" : "Home"}
+            {is2FA || forgotPasswordStep > 0 ? "Back" : "Home"}
           </button>
         )}
         
@@ -236,20 +332,170 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
       </div>
 
       {/* Right Section */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-y-auto">
-        {(onBack || is2FA) && ( // For mobile when no left section
+      <div className="w-full md:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-12 relative overflow-y-auto">
+        {(onBack || is2FA || forgotPasswordStep > 0) && ( // For mobile when no left section
           <button
-            onClick={() => is2FA ? setIs2FA(false) : onBack?.()}
-            className="md:hidden absolute top-8 left-8 flex items-center text-sm font-medium text-gray-500 hover:text-black transition-colors"
+            onClick={() => { if (forgotPasswordStep > 0) { setForgotPasswordStep(0); } else if (is2FA) { setIs2FA(false); } else { onBack?.(); } }}
+            className="md:hidden absolute top-6 left-6 sm:top-8 sm:left-8 flex items-center text-sm font-medium text-gray-500 hover:text-black transition-colors z-20"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
-            {is2FA ? "Back" : "Home"}
+            {is2FA || forgotPasswordStep > 0 ? "Back" : "Home"}
           </button>
         )}
 
-        <div className="w-full max-w-[480px] mx-auto">
+        <div className="w-full max-w-[480px] mx-auto pt-12 md:pt-0">
           <AnimatePresence mode="wait" initial={false}>
-            {is2FA ? (
+            
+            {forgotPasswordStep > 0 ? (
+              <motion.div
+                key="forgot-password"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className="w-full"
+              >
+                <div className="flex flex-col items-center mb-6">
+                  <h1 className="text-[28px] font-medium text-center mb-2 tracking-tight text-black">
+                    {forgotPasswordStep === 1 ? "Reset Password" : forgotPasswordStep === 2 ? "Verify Code" : "New Password"}
+                  </h1>
+                  <p className="text-gray-500 text-[15px] text-center">
+                    {forgotPasswordStep === 1 ? "Enter your email to receive a reset code." : forgotPasswordStep === 2 ? "Enter the verification code sent to your email." : "Enter your new password."}
+                  </p>
+                </div>
+                
+                {forgotPasswordStep === 1 && (
+                  <div className="relative mb-6">
+                    <input 
+                      type="email" 
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md py-2.5 px-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                    />
+                  </div>
+                )}
+                
+                {forgotPasswordStep === 2 && (
+                  <>
+                  <div className="space-y-6 relative mb-6">
+                    <div className="flex gap-4 relative">
+                      <div className="w-full">
+                        <div className="flex gap-2 sm:gap-3 justify-center">
+                          {twoFACode.map((digit, index) => (
+                            <input 
+                              key={index}
+                              ref={(el) => {
+                                inputRefs.current[index] = el;
+                              }}
+                              type="text" 
+                              maxLength={5}
+                              value={digit}
+                              onChange={(e) => handleCodeChange(index, e.target.value)}
+                              onKeyDown={(e) => handleKeyDown(index, e)}
+                              className="w-10 h-12 sm:w-[50px] sm:h-[48px] border border-gray-300 rounded-xl text-center text-lg sm:text-xl font-medium focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all" 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center mt-6 mb-6">
+                    {countdown > 0 ? (
+                      <p className="text-sm text-gray-500">Code expires in {countdown}s</p>
+                    ) : (
+                      <button 
+                        type="button"
+                        onClick={handleResendCode}
+                        disabled={isLoading}
+                        className="text-sm text-black underline font-medium focus:outline-none disabled:opacity-50"
+                      >
+                        Resend Code
+                      </button>
+                    )}
+                  </div>
+                  </>
+                )}
+
+                {forgotPasswordStep === 3 && (
+                  <>
+                  <div className="relative mb-4">
+                    <input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="New Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      <button 
+                        type="button" 
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-gray-400 hover:text-black transition-colors focus:outline-none"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="relative mb-6">
+                    <input 
+                      type={showConfirmPassword ? "text" : "password"} 
+                      placeholder="Confirm New Password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      <button 
+                        type="button" 
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="text-gray-400 hover:text-black transition-colors focus:outline-none"
+                      >
+                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  </>
+                )}
+
+                <button 
+                  className="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 rounded-lg transition-colors text-[17px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                  onClick={async () => {
+                    if (isLoading) return;
+                    setIsLoading(true);
+                    try {
+                      if (forgotPasswordStep === 2) {
+                        const enteredCode = twoFACode.join("");
+                        if (isCodeExpired) {
+                          setErrorMessage("Verification code has expired. Please resend.");
+                        } else if (enteredCode === generatedVerificationCode) {
+                          setForgotPasswordStep(3);
+                          setPassword("");
+                          setConfirmPassword("");
+                          setErrorMessage("");
+                        } else {
+                          setErrorMessage("Invalid verification code. Please try again.");
+                        }
+                      } else {
+                        await handleForgotPassword();
+                      }
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                >
+                  {isLoading ? "Loading..." : forgotPasswordStep === 1 ? "Send Code" : forgotPasswordStep === 2 ? "Verify Code" : "Update Password"}
+                </button>
+                {errorMessage && (
+                  <div className="text-red-500 text-sm text-center mt-3">
+                    {errorMessage}
+                  </div>
+                )}
+              </motion.div>
+            ) : is2FA ? (
+
               <motion.div
                 key="2fa"
                 initial={{ opacity: 0 }}
@@ -276,7 +522,7 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                       <p className="text-gray-500 text-sm mb-6 leading-relaxed">
                         We've sent a verification code to <span className="font-medium text-black">{email || "your email"}</span>. Please enter it below.
                       </p>
-                      <div className="flex gap-3 justify-center">
+                      <div className="flex gap-2 sm:gap-3 justify-center">
                         {twoFACode.map((digit, index) => (
                           <input 
                             key={index}
@@ -288,7 +534,7 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                             value={digit}
                             onChange={(e) => handleCodeChange(index, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(index, e)}
-                            className="w-[50px] h-[48px] border border-gray-300 rounded-xl text-center text-xl font-medium focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all" 
+                            className="w-10 h-12 sm:w-[50px] sm:h-[48px] border border-gray-300 rounded-xl text-center text-lg sm:text-xl font-medium focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all" 
                           />
                         ))}
                       </div>
@@ -296,19 +542,43 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                   </div>
                 </div>
 
+                <div className="text-center mt-6 -mb-2">
+                  {countdown > 0 ? (
+                    <p className="text-sm text-gray-500">Code expires in {countdown}s</p>
+                  ) : (
+                    <button 
+                      type="button"
+                      onClick={handleResendCode}
+                      disabled={isLoading}
+                      className="text-sm text-black underline font-medium focus:outline-none disabled:opacity-50"
+                    >
+                      Resend Code
+                    </button>
+                  )}
+                </div>
+
                 <div className="mt-8 flex flex-col gap-3">
                    <button 
-                    className="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 rounded-lg transition-colors text-[17px]"
+                    className="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 rounded-lg transition-colors text-[17px] disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isLoading}
                     onClick={() => {
-                      const enteredCode = twoFACode.join("");
-                      if (enteredCode === generatedVerificationCode) {
-                        onSignUpSuccess?.(email);
-                      } else {
-                        alert("Invalid verification code. Please try again.");
+                      if (isLoading) return;
+                      setIsLoading(true);
+                      try {
+                        const enteredCode = twoFACode.join("");
+                        if (isCodeExpired) {
+                          alert("Verification code has expired. Please resend.");
+                        } else if (enteredCode === generatedVerificationCode) {
+                          onSignUpSuccess?.(email);
+                        } else {
+                          alert("Invalid verification code. Please try again.");
+                        }
+                      } finally {
+                        setIsLoading(false);
                       }
                     }}
                   >
-                    Verify & Continue
+                    {isLoading ? "Loading..." : "Verify & Continue"}
                   </button>
                   {errorMessage && (
                     <div className="text-red-500 text-sm text-center">
@@ -327,31 +597,21 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                 className="w-full"
               >
               <>
-                <h1 className="text-4xl font-medium text-center mb-10 tracking-tight text-black">
+                <h1 className="text-4xl sm:text-[44px] font-semibold text-center mb-10 tracking-tight text-black">
                   {isLogin ? "Welcome back" : "Create an account"}
                 </h1>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="flex flex-col gap-3 mb-8">
                 <button 
                   onClick={async () => {
-                    try {
-                      const result = await signInWithGoogle();
-                      setErrorMessage("");
-                      onSignUpSuccess?.(result.user.email || "", result.user.photoURL);
-                    } catch (error: any) {
-                      if (error.message && (error.message.includes('closing') || error.message.includes('IndexedDB') || error.message.includes('third-party') || error.message.includes('argument-error'))) {
-                        setErrorMessage("Authentication is blocked in this preview iframe. Please open the app in a new tab (using the button in the top right) to sign in with Google.");
-                      } else {
-                        setErrorMessage(error.message || "Failed to sign in with Google.");
-                      }
-                    }
+                    console.log("Not implemented yet");
                   }}
-                  className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-[15px] font-normal text-black"
+                  className="flex items-center justify-center gap-3 w-full px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-[15px] font-medium text-black"
                 >
                   <GoogleIcon className="w-5 h-5" />
                   {isLogin ? "Sign in with Google" : "Sign up with Google"}
                 </button>
-                <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-[15px] font-normal text-black">
+                <button className="flex items-center justify-center gap-3 w-full px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-[15px] font-medium text-black">
                   <AppleIcon className="w-5 h-5" />
                   {isLogin ? "Sign in with Apple" : "Sign up with Apple"}
                 </button>
@@ -364,30 +624,26 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
               </div>
 
               {!isLogin && (
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div className="relative">
                     <input 
                       type="text" 
-                      placeholder="Chang Sam"
+                      placeholder="First Name"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value.replace(/\d/g, ''))}
-                      className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-20 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                      className="w-full border border-gray-300 rounded-md py-2.5 px-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-black pointer-events-none">
-                      First Name
-                    </span>
+                    
                   </div>
                   <div className="relative">
                     <input 
                       type="text" 
-                      placeholder="Chueak"
+                      placeholder="Last Name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value.replace(/\d/g, ''))}
-                      className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-20 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                      className="w-full border border-gray-300 rounded-md py-2.5 px-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-black pointer-events-none">
-                      Last Name
-                    </span>
+                    
                   </div>
                 </div>
               )}
@@ -395,23 +651,21 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
               <div className="relative mb-4">
                 <input 
                   type="email" 
-                  placeholder="your@gmail.com"
+                  placeholder="Email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-16 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                  className="w-full border border-gray-300 rounded-md py-2.5 px-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-black pointer-events-none">
-                  Email
-                </span>
+                
               </div>
 
               <div className={`relative ${isLogin ? 'mb-6' : 'mb-4'}`}>
                 <input 
                   type={showPassword ? "text" : "password"} 
-                  placeholder="••••••••••••"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-28 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                  className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button 
@@ -422,9 +676,7 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
-                  <span className="text-sm text-black pointer-events-none">
-                    Password
-                  </span>
+                  
                 </div>
               </div>
 
@@ -432,10 +684,10 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                 <div className="relative mb-6">
                   <input 
                     type={showConfirmPassword ? "text" : "password"} 
-                    placeholder="••••••••••••"
+                    placeholder="Confirm Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-[140px] text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
+                    className="w-full border border-gray-300 rounded-md py-2.5 pl-3 pr-10 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder-gray-400 text-black"
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <button 
@@ -446,9 +698,7 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                     >
                       {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
-                    <span className="text-sm text-black pointer-events-none">
-                      Confirm Password
-                    </span>
+                    
                   </div>
                 </div>
               )}
@@ -509,10 +759,19 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
               </AnimatePresence>
 
               <button 
-                className="w-full bg-black hover:bg-gray-800 text-white font-medium py-2.5 rounded-md transition-colors mb-6 text-[17px]"
-                onClick={handleSubmit}
+                className="w-full bg-black hover:bg-gray-800 text-white font-medium py-2.5 rounded-md transition-colors mb-6 text-[17px] disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                onClick={async () => {
+                  if (isLoading) return;
+                  setIsLoading(true);
+                  try {
+                    await handleSubmit();
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
               >
-                Submit
+                {isLoading ? "Loading..." : "Submit"}
               </button>
 
               <div className="text-center text-base">
@@ -525,6 +784,17 @@ export function SignUpPage({ onBack, onSignUpSuccess, initialIsLogin = false }: 
                 >
                   {isLogin ? "Sign up" : "Log in"}
                 </button>
+                {isLogin && (
+                  <>
+                    <span className="text-gray-500 mx-2">|</span>
+                    <button 
+                      onClick={() => setForgotPasswordStep(1)}
+                      className="font-medium text-black hover:underline focus:outline-none"
+                    >
+                      Forgot Password?
+                    </button>
+                  </>
+                )}
               </div>
               </>
             </motion.div>

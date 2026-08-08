@@ -21,13 +21,29 @@ const items: CardStackItem[] = [
   },
 ];
 
+import { useEffect, useState } from "react";
+
 export function CardStackDemoPage() {
+  const [windowWidth, setWindowWidth] = useState(1024);
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
+  const cardWidth = isMobile ? windowWidth * 0.75 : 520;
+  const cardHeight = isMobile ? windowWidth * 0.75 * 0.615 : 320;
   return (
     <div className="w-full mb-32 -mt-[65px]">
       <div className="mx-auto w-full max-w-5xl px-8">
         <CardStack
           items={items}
           initialIndex={0}
+          cardWidth={cardWidth}
+          cardHeight={cardHeight}
           spreadDeg={35}
           autoAdvance={false}
           intervalMs={2000}

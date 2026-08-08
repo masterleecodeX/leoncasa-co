@@ -24,7 +24,7 @@ export interface Hero10Props {
 
 const variantStyles = {
   standard: {
-    section: 'py-20 sm:py-28',
+    section: 'py-12 sm:py-20',
     title: 'text-3xl sm:text-4xl md:text-5xl',
     description: 'max-w-lg text-sm sm:text-base',
     header: 'gap-5',
@@ -44,9 +44,9 @@ const variantStyles = {
 } as const
 
 const fanSlots = [
-  { width: 'w-[38%]', layout: '-mr-8 z-10', rotate: -6, x: 48, ty: 24 },
+  { width: 'w-[38%]', layout: '-mr-4 sm:-mr-8 z-10', rotate: -6, x: 48, ty: 24 },
   { width: 'w-[42%]', layout: 'z-20', rotate: 0, x: 0, ty: -8 },
-  { width: 'w-[38%]', layout: '-ml-8 z-10', rotate: 6, x: -48, ty: 24 },
+  { width: 'w-[38%]', layout: '-ml-4 sm:-ml-8 z-10', rotate: 6, x: -48, ty: 24 },
 ]
 
 const fanContainer: Variants = {

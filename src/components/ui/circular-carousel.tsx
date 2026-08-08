@@ -22,10 +22,12 @@ export interface CircularCarouselProps {
 }
 
 const VISIBLE_COUNT = 5;
-const RADIUS_X = 220;
-const RADIUS_Y = 100;
 
-function getItemPosition(index: number, activeIndex: number, total: number) {
+function getItemPosition(index: number, activeIndex: number, total: number, windowWidth: number = 1024) {
+  const isMobile = windowWidth < 768;
+  const radiusX = isMobile ? 130 : 220;
+  const radiusY = isMobile ? 60 : 100;
+
   const offset = index - activeIndex;
   const half = Math.floor(VISIBLE_COUNT / 2);
   let adjustedOffset = offset;
@@ -36,8 +38,9 @@ function getItemPosition(index: number, activeIndex: number, total: number) {
   if (Math.abs(adjustedOffset) > half * 2) return null;
 
   const angle = (adjustedOffset / VISIBLE_COUNT) * Math.PI;
-  const x = Math.sin(angle) * RADIUS_X;
-  const y = -Math.cos(angle) * RADIUS_Y;
+  const x = Math.sin(angle) * radiusX;
+  const y = -Math.cos(angle) * radiusY;
+  
 
   const distance = Math.abs(adjustedOffset);
   const maxDistance = half + 1;
@@ -57,6 +60,14 @@ export function CircularCarousel({
   className,
 }: CircularCarouselProps) {
   const [internalIndex, setInternalIndex] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(1024);
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
