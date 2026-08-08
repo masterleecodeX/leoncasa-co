@@ -1,0 +1,27 @@
+{
+  "projectInfo": {
+    "name": "Blog Platform",
+    "description": "A platform for viewing and publishing articles.",
+    "firestoreConfig": {
+      "databaseId": "(default)"
+    }
+  },
+  "collections": [
+    {
+      "name": "posts",
+      "description": "A collection of blog posts.",
+      "readAccess": "public",
+      "writeAccess": "authenticated",
+      "fields": [
+        { "name": "headline", "type": "string", "required": true },
+        { "name": "excerpt", "type": "string", "required": true },
+        { "name": "images", "type": "array", "required": false },
+        { "name": "tag", "type": "string", "required": false },
+        { "name": "readingTime", "type": "number", "required": false },
+        { "name": "writer", "type": "string", "required": false },
+        { "name": "publishedAt", "type": "timestamp", "required": true },
+        { "name": "layout", "type": "string", "required": true }
+      ]
+    }
+  ]
+}

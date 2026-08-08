@@ -10,6 +10,8 @@ export interface HeaderProps {
   onLogin: () => void;
   onSignup: () => void;
   onLogout: () => void;
+  onAdmin?: () => void;
+  onViewPost?: (post?: any) => void;
   className?: string;
 }
 
@@ -21,6 +23,7 @@ export function Header({
   onLogin,
   onSignup,
   onLogout,
+  onAdmin,
   className = "w-full px-2 sm:px-4 flex justify-between items-center relative z-50 pt-4"
 }: HeaderProps) {
   return (
@@ -31,7 +34,7 @@ export function Header({
       </div>
       <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 relative z-[60] bg-transparent pr-2 sm:pr-4">
         {isLoggedIn ? (
-          <FloatingActionMenuDemo userPhotoUrl={userPhotoUrl} isAdmin={isAdmin} onLogout={onLogout} />
+          <FloatingActionMenuDemo userPhotoUrl={userPhotoUrl} isAdmin={isAdmin} onLogout={onLogout} onAdmin={onAdmin} />
         ) : (
           <>
             <button 

@@ -1,7 +1,7 @@
 import FloatingActionMenu from "@/components/ui/floating-action-menu"
 import { Settings, User, LogOut, Shield } from "lucide-react";
 
-export const FloatingActionMenuDemo = ({ onLogout, userPhotoUrl, isAdmin }: { onLogout?: () => void, userPhotoUrl?: string | null, isAdmin?: boolean }) => {
+export const FloatingActionMenuDemo = ({ onLogout, userPhotoUrl, isAdmin, onAdmin }: { onLogout?: () => void, userPhotoUrl?: string | null, isAdmin?: boolean, onAdmin?: () => void }) => {
     return (
           <FloatingActionMenu
           className="relative z-50"
@@ -10,7 +10,7 @@ export const FloatingActionMenuDemo = ({ onLogout, userPhotoUrl, isAdmin }: { on
             ...(isAdmin ? [{
               label: "Admin",
               Icon: <Shield className="w-4 h-4 text-white" />,
-              onClick: () => console.log("Admin clicked"),
+              onClick: onAdmin || (() => console.log("Admin clicked")),
             }] : []),
             {
               label: "Account",
