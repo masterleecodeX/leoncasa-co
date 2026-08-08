@@ -3,6 +3,14 @@
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { auth } from "@/lib/firebase";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "firebase/auth";
 
 export const MEDIA_URL =
   "https://cdn.phototourl.com/free/2026-08-02-d4ecf953-4dd8-47a0-9043-284111be4877.png";
@@ -204,13 +212,6 @@ export function SignUpPage({
     setErrorMessage("");
 
     try {
-      const { auth } = await import("@/lib/firebase");
-      const {
-        signInWithEmailAndPassword,
-        createUserWithEmailAndPassword,
-        updateProfile,
-      } = await import("firebase/auth");
-
       if (isLogin) {
         if (!email || !password) {
           setErrorMessage("Please fill in all fields.");
@@ -275,9 +276,6 @@ export function SignUpPage({
 
   const handleGoogleLogin = async () => {
     try {
-      const { auth } = await import("@/lib/firebase");
-      const { GoogleAuthProvider, signInWithPopup } =
-        await import("firebase/auth");
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       onSignUpSuccess?.(

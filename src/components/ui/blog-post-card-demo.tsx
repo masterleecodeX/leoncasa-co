@@ -3,35 +3,28 @@ import {
   ArticleCard,
   type ArticleCardProps,
 } from "@/components/ui/blog-post-card";
+import { db } from "@/lib/firebase";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
 export function DemoOne({ onViewPost }: { onViewPost?: (post?: any) => void }) {
   const [customPosts, setCustomPosts] = React.useState<ArticleCardProps[]>([]);
 
   React.useEffect(() => {
-    import("@/lib/firebase").then(({ db }) => {
-      import("firebase/firestore").then(
-        ({ collection, query, orderBy, onSnapshot }) => {
-          const q = query(
-            collection(db, "posts"),
-            orderBy("publishedAt", "desc"),
-          );
-          const unsubscribe = onSnapshot(q, (snapshot) => {
-            const posts = snapshot.docs.map((doc) => {
-              const data = doc.data();
-              return {
-                ...data,
-                id: doc.id,
-                publishedAt: data.publishedAt?.toDate
-                  ? data.publishedAt.toDate()
-                  : new Date(),
-              } as ArticleCardProps;
-            });
-            setCustomPosts(posts);
-          });
-          return () => unsubscribe();
-        },
-      );
+    const q = query(collection(db, "posts"), orderBy("publishedAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const posts = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+          publishedAt: data.publishedAt?.toDate
+            ? data.publishedAt.toDate()
+            : new Date(),
+        } as ArticleCardProps;
+      });
+      setCustomPosts(posts);
     });
+    return () => unsubscribe();
   }, []);
 
   const defaultPosts: ArticleCardProps[] = [

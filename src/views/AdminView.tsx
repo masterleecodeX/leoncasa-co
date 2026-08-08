@@ -12,6 +12,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
 export interface AdminViewProps extends HeaderProps {}
 
 // Helper from blog-post-card to match exact look
@@ -61,10 +64,6 @@ export function AdminView(props: AdminViewProps) {
     }
 
     try {
-      const { db } = await import("@/lib/firebase");
-      const { collection, addDoc, serverTimestamp } =
-        await import("firebase/firestore");
-
       await addDoc(collection(db, "posts"), {
         headline,
         excerpt,
