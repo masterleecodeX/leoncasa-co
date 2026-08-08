@@ -29,7 +29,7 @@ export function Header({
         <NavigationMenuDemo onHome={onHome} />
         
       </div>
-      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 relative z-[60] bg-white sm:bg-transparent">
+      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 relative z-[60] bg-transparent pr-2 sm:pr-4">
         {isLoggedIn ? (
           <FloatingActionMenuDemo userPhotoUrl={userPhotoUrl} isAdmin={isAdmin} onLogout={onLogout} />
         ) : (

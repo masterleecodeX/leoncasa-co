@@ -57,14 +57,14 @@ export function NavigationMenuDemo({ onHome }: { onHome?: () => void }) {
           value ? "opacity-100 bg-white/20 backdrop-blur-[2px]" : "opacity-0 bg-transparent backdrop-blur-none"
         )}
       />
-      <div className="flex items-center gap-0 sm:gap-6 relative z-50 overflow-x-auto no-scrollbar  w-full">
+      <div className="flex items-center gap-0 sm:gap-6 relative z-50 overflow-x-auto no-scrollbar [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] w-full">
         
       {onHome && ( <button onClick={onHome} className="flex-shrink-0 flex items-center justify-center p-1 sm:p-2 rounded-md hover:bg-gray-100 transition-colors" > <ChevronLeft className="w-5 h-5 text-gray-600" /> </button> )} <NavigationMenu value={value} onValueChange={setValue}>
         <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Home</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr] bg-white text-left">
+            <ul className="grid w-[85vw] sm:w-auto gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr] bg-white text-left">
               <li className="row-span-3">
                 <NavigationMenuLink
                   render={
@@ -95,7 +95,7 @@ export function NavigationMenuDemo({ onHome }: { onHome?: () => void }) {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px] bg-white text-left">
+            <ul className="grid w-[85vw] sm:w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px] bg-white text-left">
               {components.map((component) => (
                 <ListItem key={component.title} title={component.title} href={component.href}>
                   {component.description}
@@ -112,7 +112,7 @@ export function NavigationMenuDemo({ onHome }: { onHome?: () => void }) {
         <NavigationMenuItem>
           <NavigationMenuTrigger>List</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[300px] gap-4 bg-white text-left">
+            <ul className="grid w-[85vw] sm:w-[300px] gap-4 bg-white text-left">
               <li>
                 <NavigationMenuLink render={<a href="#" />}>
                   <div className="font-medium">Components</div>
