@@ -14,7 +14,7 @@ export function HomeView({ hero10Values, ...headerProps }: HomeViewProps) {
         <Header {...headerProps} />
         <Hero10 {...hero10Values} />
         
-        <section className="w-full bg-background py-16 md:py-24">
+        <section className="w-full bg-background py-16 md:py-24 -mt-10">
           <div className="mx-auto w-full max-w-4xl px-6 md:px-16 lg:px-24 text-left">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-6 md:mb-8">
               The Horizon of Engineering
