@@ -57,17 +57,9 @@ export function NavigationMenuDemo({ onHome }: { onHome?: () => void }) {
           value ? "opacity-100 bg-white/20 backdrop-blur-[2px]" : "opacity-0 bg-transparent backdrop-blur-none"
         )}
       />
-      <div className="flex items-center gap-6 relative z-50">
-        {onHome && (
-          <button 
-            onClick={onHome} 
-            className="flex items-center justify-center p-1 text-gray-500 hover:text-black transition-colors"
-            aria-label="Go to home"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-        )}
-      <NavigationMenu value={value} onValueChange={setValue}>
+      <div className="flex items-center gap-0 sm:gap-6 relative z-50 overflow-x-auto no-scrollbar  w-full">
+        
+      {onHome && ( <button onClick={onHome} className="flex-shrink-0 flex items-center justify-center p-1 sm:p-2 rounded-md hover:bg-gray-100 transition-colors" > <ChevronLeft className="w-5 h-5 text-gray-600" /> </button> )} <NavigationMenu value={value} onValueChange={setValue}>
         <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Home</NavigationMenuTrigger>

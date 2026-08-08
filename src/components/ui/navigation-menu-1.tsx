@@ -33,7 +33,7 @@ function NavigationMenuItem({ className, ...props }: React.ComponentProps<typeof
 }
 
 const navigationMenuTriggerStyle = cva(
-  'group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium hover:bg-black/5 hover:text-black focus:bg-black/5 focus:text-black disabled:pointer-events-none disabled:opacity-50 data-[popup-open]:hover:bg-black/5 data-[popup-open]:text-black data-[popup-open]:focus:bg-black/5 data-[popup-open]:bg-black/5 focus-visible:ring-black/50 outline-none transition-[color,box-shadow,background-color] focus-visible:ring-[3px] focus-visible:outline-1 text-gray-700',
+  'group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-2 sm:px-4 py-2 text-sm font-medium hover:bg-black/5 hover:text-black focus:bg-black/5 focus:text-black disabled:pointer-events-none disabled:opacity-50 data-[popup-open]:hover:bg-black/5 data-[popup-open]:text-black data-[popup-open]:focus:bg-black/5 data-[popup-open]:bg-black/5 focus-visible:ring-black/50 outline-none transition-[color,box-shadow,background-color] focus-visible:ring-[3px] focus-visible:outline-1 text-gray-700',
 );
 
 function NavigationMenuTrigger({

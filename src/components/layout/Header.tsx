@@ -21,15 +21,15 @@ export function Header({
   onLogin,
   onSignup,
   onLogout,
-  className = "w-full max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 xl:px-16 flex justify-between items-center relative z-50 pt-4"
+  className = "w-full px-2 sm:px-4 flex justify-between items-center relative z-50 pt-4"
 }: HeaderProps) {
   return (
     <div className={className}>
-      <div className="flex items-center gap-2 md:gap-0">
+      <div className="flex items-center min-w-0 flex-1 pr-2">
         <NavigationMenuDemo onHome={onHome} />
         
       </div>
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 relative z-[60] bg-white sm:bg-transparent">
         {isLoggedIn ? (
           <FloatingActionMenuDemo userPhotoUrl={userPhotoUrl} isAdmin={isAdmin} onLogout={onLogout} />
         ) : (
