@@ -10,6 +10,7 @@ import { HomeView } from "@/views/HomeView";
 import { DonateView } from "@/views/DonateView";
 import { AdminView } from "@/views/AdminView";
 import { PostView } from "@/views/PostView";
+import EmptyComponent from "@/components/ui/empty5";
 
 import { AnimatePresence, motion } from "motion/react";
 
@@ -167,5 +168,9 @@ export default function App() {
     }
   };
 
-  return <AnimatePresence mode="wait">{renderView()}</AnimatePresence>;
+  return (
+    <div className="flex min-h-svh w-full items-center justify-center p-6 bg-background">
+      <EmptyComponent />
+    </div>
+  );
 }
