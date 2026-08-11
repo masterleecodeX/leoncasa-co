@@ -132,7 +132,7 @@ export function Hero04({
   const titleElement = title && (
     <h1
       className={cn(
-        'text-foreground font-serif font-normal tracking-tight text-balance',
+        'text-slate-900 font-serif font-normal tracking-tight text-balance',
         vs.title,
       )}
     >
@@ -147,7 +147,7 @@ export function Hero04({
   )
 
   const descriptionElement = description && (
-    <p className={cn('text-muted-foreground', vs.description)}>
+    <p className={cn('text-slate-600', vs.description)}>
       <Balancer>{description}</Balancer>
     </p>
   )
@@ -173,7 +173,7 @@ export function Hero04({
   )
 
   return (
-    <section className="bg-background relative isolate w-full overflow-hidden">
+    <section className="bg-white relative isolate w-full overflow-hidden">
       {backgroundElement}
 
       <motion.div

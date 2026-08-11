@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Hero10Demo from "./components/demo/Hero10Demo";
 import NavigationMenuDemo from "./components/demo/NavigationMenuDemo";
@@ -8,11 +8,13 @@ import CircularCarouselDemo from "./components/demo/CircularCarouselDemo";
 import TreeDemo from "./components/demo/TreeDemo";
 import { BlogDemo } from "./components/demo/BlogDemo";
 import Hero04Demo from "./components/demo/Hero04Demo";
+import LayoutToggleDemo from "./components/demo/LayoutToggleDemo";
+import CoverflowDemo from "./components/demo/CoverflowDemo";
 import { Footer } from "./components/ui/footer-section";
 import { Button } from "./components/ui/button";
 import AuthSectionTwo from "./components/ui/auth-section-2";
 import FloatingActionMenu from "./components/ui/floating-action-menu";
-import { Settings, User as UserIcon, LogOut } from "lucide-react";
+import { Settings, User as UserIcon, LogOut, ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import { signOut } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
@@ -111,21 +113,15 @@ function HomePage() {
 
 function GetStartedPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <header className="flex w-full items-center justify-between p-4 relative z-50">
+    <div className="min-h-screen flex flex-col bg-white">
+      <header className="flex w-full items-center justify-between p-4 relative z-50 text-slate-900">
         <NavigationMenuDemo showBackArrow={true} />
         <HeaderActions />
       </header>
-      <main className="flex-1 flex flex-col relative z-10 bg-background">
-        <CircularCarouselDemo />
-        <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-12 md:py-16 flex flex-col md:flex-row gap-8 lg:gap-12">
-          <div className="flex-shrink-0 w-full md:w-48 lg:w-56">
-            <TreeDemo />
-          </div>
-          <div className="flex-1 min-w-0">
-            <BlogDemo />
-          </div>
-        </div>
+      <main className="flex-1 flex flex-col relative z-10 bg-white -mt-[100px] pt-12 pb-24">
+        <Hero04Demo />
+        <CoverflowDemo />
+        <LayoutToggleDemo />
       </main>
     </div>
   );
