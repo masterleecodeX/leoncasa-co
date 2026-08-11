@@ -41,10 +41,10 @@ const items = [
   },
 ];
 
-export function CircularCarouselDemo() {
+export default function CircularCarouselDemo() {
   return (
-    <div className="flex h-[550px] w-full max-w-[1180px] mx-auto mt-[15px] overflow-hidden items-center justify-center p-4">
-      <CircularCarousel items={items} autoPlay={false} />
+    <div className="flex flex-1 w-full flex-col items-center justify-center bg-background py-20 px-8">
+      <CircularCarousel items={items} />
     </div>
   );
 }

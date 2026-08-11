@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,12 +22,10 @@ export interface CircularCarouselProps {
 }
 
 const VISIBLE_COUNT = 5;
+const RADIUS_X = 220;
+const RADIUS_Y = 100;
 
-function getItemPosition(index: number, activeIndex: number, total: number, windowWidth: number = 1024) {
-  const isMobile = windowWidth < 768;
-  const radiusX = isMobile ? 130 : 220;
-  const radiusY = isMobile ? 60 : 100;
-
+function getItemPosition(index: number, activeIndex: number, total: number) {
   const offset = index - activeIndex;
   const half = Math.floor(VISIBLE_COUNT / 2);
   let adjustedOffset = offset;
@@ -38,9 +36,8 @@ function getItemPosition(index: number, activeIndex: number, total: number, wind
   if (Math.abs(adjustedOffset) > half * 2) return null;
 
   const angle = (adjustedOffset / VISIBLE_COUNT) * Math.PI;
-  const x = Math.sin(angle) * radiusX;
-  const y = -Math.cos(angle) * radiusY;
-  
+  const x = Math.sin(angle) * RADIUS_X;
+  const y = -Math.cos(angle) * RADIUS_Y;
 
   const distance = Math.abs(adjustedOffset);
   const maxDistance = half + 1;
@@ -60,14 +57,6 @@ export function CircularCarousel({
   className,
 }: CircularCarouselProps) {
   const [internalIndex, setInternalIndex] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(1024);
-
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -127,16 +116,7 @@ export function CircularCarousel({
       )}
     >
       {/* Circular track */}
-      <motion.div 
-        className="relative h-[280px] w-full max-w-lg cursor-grab active:cursor-grabbing"
-        onPanEnd={(e, { offset, velocity }) => {
-          if (offset.x < -50 || velocity.x < -500) {
-            next();
-          } else if (offset.x > 50 || velocity.x > 500) {
-            prev();
-          }
-        }}
-      >
+      <div className="relative h-[280px] w-full max-w-lg">
         <AnimatePresence mode="popLayout">
           {items.map((item, i) => {
             const pos = getItemPosition(i, activeIndex, total);
@@ -166,9 +146,9 @@ export function CircularCarousel({
                 aria-selected={isActive}
                 role="option"
                 className={cn(
-                  "absolute left-1/2 top-1/2 flex h-32 w-48 -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col items-start justify-between rounded-2xl border border-zinc-200 bg-gradient-to-b from-white to-gray-50 p-4 backdrop-blur-sm transition-shadow duration-300",
+                  "absolute left-1/2 top-1/2 flex h-32 w-48 -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col items-start justify-between rounded-2xl border border-zinc-200 bg-gradient-to-b from-white/90 to-zinc-50/90 p-4 backdrop-blur-sm transition-shadow duration-300",
                   isActive
-                    ? "shadow-[0_20px_60px_-12px_rgba(0,0,0,0.15)]"
+                    ? "shadow-[0_20px_60px_-12px_rgba(0,0,0,0.1)]"
                     : "shadow-[0_8px_24px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_32px_-4px_rgba(0,0,0,0.1)]",
                 )}
                 style={{ transformOrigin: "center center" }}
@@ -184,7 +164,7 @@ export function CircularCarousel({
                       "font-semibold leading-tight transition-colors duration-300",
                       isActive
                         ? "text-zinc-900 text-base"
-                        : "text-zinc-500 text-sm",
+                        : "text-zinc-600 text-sm",
                     )}
                   >
                     {item.title}
@@ -192,7 +172,7 @@ export function CircularCarousel({
                   <p
                     className={cn(
                       "mt-1 line-clamp-2 text-xs leading-relaxed transition-colors duration-300",
-                      isActive ? "text-zinc-600" : "text-zinc-400",
+                      isActive ? "text-zinc-500" : "text-zinc-400",
                     )}
                   >
                     {item.description}
@@ -202,7 +182,7 @@ export function CircularCarousel({
             );
           })}
         </AnimatePresence>
-      </motion.div>
+      </div>
 
       {/* Center content */}
       <motion.div
@@ -215,7 +195,7 @@ export function CircularCarousel({
         <span className="text-5xl font-bold tracking-tight text-zinc-900">
           {String(activeIndex + 1).padStart(2, "0")}
         </span>
-        <span className="mt-1 text-xs text-zinc-400">
+        <span className="mt-1 text-xs text-zinc-500">
           of {String(total).padStart(2, "0")}
         </span>
       </motion.div>
@@ -227,7 +207,7 @@ export function CircularCarousel({
           whileTap={{ scale: 0.95 }}
           onClick={prev}
           aria-label="Previous item"
-          className="flex h-10 w-10 items-center justify-center text-zinc-600 transition-colors hover:text-zinc-900 outline-none"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-zinc-50 text-zinc-500 backdrop-blur-sm transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200/50"
         >
           <ChevronLeft className="size-5" />
         </motion.button>
@@ -241,10 +221,10 @@ export function CircularCarousel({
               aria-selected={i === activeIndex}
               onClick={() => goTo(i)}
               className={cn(
-                "h-1.5 rounded-full transition-all duration-300 outline-none",
+                "h-1.5 rounded-full transition-all duration-300",
                 i === activeIndex
                   ? "w-6 bg-zinc-800"
-                  : "w-1.5 bg-zinc-300 hover:bg-zinc-400",
+                  : "w-1.5 bg-zinc-200 hover:bg-zinc-300",
               )}
               aria-label={`Go to item ${i + 1}`}
             />
@@ -256,7 +236,7 @@ export function CircularCarousel({
           whileTap={{ scale: 0.95 }}
           onClick={next}
           aria-label="Next item"
-          className="flex h-10 w-10 items-center justify-center text-zinc-600 transition-colors hover:text-zinc-900 outline-none"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-zinc-50 text-zinc-500 backdrop-blur-sm transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200/50"
         >
           <ChevronRight className="size-5" />
         </motion.button>

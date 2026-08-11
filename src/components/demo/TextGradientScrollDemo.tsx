@@ -1,0 +1,19 @@
+import { siteConfig } from "@/config/site"
+
+function TextGradientScrollDemo() {
+  return (
+    <div className="w-full relative py-24 md:py-48 flex items-center justify-center">
+      <div className="w-full max-w-5xl mx-auto p-4 items-center mb-0 -mt-[250px]">
+        <div className="flex p-4 text-base md:text-lg pt-14 w-[700px] max-w-full mx-auto flex flex-col items-start justify-center">
+          {siteConfig.scrollText.map((text, index) => (
+            <p key={index} className={index !== siteConfig.scrollText.length - 1 ? "mb-8 text-foreground" : "text-foreground"}>
+              {text}
+            </p>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default TextGradientScrollDemo

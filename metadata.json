@@ -1,8 +1,6 @@
 {
-  "name": "leoncasa&co.",
-  "description": "furniture selling",
+  "name": "Blank App",
+  "description": "A completely blank application.",
   "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -1,31 +1,23 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
-
-// Suppress ResizeObserver errors
-const hideResizeObserverError = (e: ErrorEvent | PromiseRejectionEvent) => {
-  const isErrorEvent = e instanceof ErrorEvent;
-  const message = isErrorEvent ? e.message : (e as PromiseRejectionEvent).reason?.message;
-  
-  if (message && message.includes('ResizeObserver')) {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-  }
-};
-window.addEventListener('error', hideResizeObserverError as EventListener, true);
-window.addEventListener('unhandledrejection', hideResizeObserverError as EventListener, true);
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
 
 const originalError = console.error;
 console.error = (...args) => {
-  if (args[0] && typeof args[0] === 'string' && args[0].includes('ResizeObserver')) {
+  if (args[0] && typeof args[0] === 'string' && args[0].includes('ResizeObserver loop completed with undelivered notifications.')) {
     return;
   }
   originalError.call(console, ...args);
 };
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+window.addEventListener('error', (e) => {
+  if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+    e.stopImmediatePropagation();
+  }
+});
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
-);
+  </React.StrictMode>,
+)

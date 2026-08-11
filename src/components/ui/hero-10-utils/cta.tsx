@@ -1,29 +1,19 @@
-import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { type VariantProps } from 'class-variance-authority'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, type ButtonProps } from "@/components/ui/button"
+import { Link } from "react-router-dom"
 
 export interface CtaProps {
   ctaEnabled?: boolean
-  text?: string
+  text: string
   link?: string
-  variant?: VariantProps<typeof buttonVariants>['variant']
-  size?: VariantProps<typeof buttonVariants>['size']
-  onClick?: () => void
+  variant?: ButtonProps['variant']
+  size?: ButtonProps['size']
 }
 
 export function Cta({ cta }: { cta: CtaProps }) {
-  if (cta.onClick) {
-    return (
-      <Button variant={cta.variant} size={cta.size} onClick={cta.onClick}>
-        {cta.text}
-      </Button>
-    )
-  }
-
+  if (!cta.ctaEnabled) return null
   return (
-    <Button variant={cta.variant} size={cta.size} asChild>
-      <a href={cta.link || '#'}>{cta.text}</a>
+    <Button asChild variant={cta.variant} size={cta.size}>
+      <Link to={cta.link ?? '#'}>{cta.text}</Link>
     </Button>
   )
 }

@@ -33,7 +33,7 @@ function NavigationMenuItem({ className, ...props }: React.ComponentProps<typeof
 }
 
 const navigationMenuTriggerStyle = cva(
-  'group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-2 sm:px-4 py-2 text-sm font-medium hover:bg-black/5 hover:text-black focus:bg-black/5 focus:text-black disabled:pointer-events-none disabled:opacity-50 data-[popup-open]:hover:bg-black/5 data-[popup-open]:text-black data-[popup-open]:focus:bg-black/5 data-[popup-open]:bg-black/5 focus-visible:ring-black/50 outline-none transition-[color,box-shadow,background-color] focus-visible:ring-[3px] focus-visible:outline-1 text-gray-700',
+  'group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-[14px] font-normal text-[#1d1d1f]/80 hover:text-[#1d1d1f] hover:bg-accent focus:bg-accent focus:text-[#1d1d1f] disabled:pointer-events-none disabled:opacity-50 data-[popup-open]:hover:bg-accent data-[popup-open]:text-[#1d1d1f] data-[popup-open]:focus:bg-accent data-[popup-open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-colors focus-visible:ring-[3px] focus-visible:outline-1',
 );
 
 function NavigationMenuTrigger({
@@ -117,7 +117,7 @@ function NavigationMenuPopup({
   return (
     <NavigationMenuPrimitive.Popup
       className={cn(
-        'data-[ending-style]:easing-[ease] relative h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-lg bg-popover shadow-lg outline-1 outline-border transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] xs:w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1',
+        'data-[ending-style]:easing-[ease] relative z-50 h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-lg bg-popover shadow-lg outline-1 outline-border transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] xs:w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1',
         className,
       )}
       {...props}
@@ -142,7 +142,7 @@ function NavigationMenuLink({ className, ...props }: React.ComponentProps<typeof
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "data-[active]:focus:bg-black/5 data-[active]:hover:bg-black/5 data-[active]:bg-black/5 data-[active]:text-black hover:bg-black/5 hover:text-black focus:bg-black/5 focus:text-black focus-visible:ring-black/50 [&_svg:not([class*='text-'])]:text-gray-500 flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4 text-gray-700",
+        "data-[active]:focus:bg-accent data-[active]:hover:bg-accent data-[active]:bg-accent/50 data-[active]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}

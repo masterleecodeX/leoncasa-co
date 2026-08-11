@@ -1,31 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <script>
-      window.addEventListener('error', function(e) {
-        if (e.message && e.message.includes('ResizeObserver loop')) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-        }
-      });
-      window.addEventListener('unhandledrejection', function(e) {
-        if (e.reason && e.reason.message && e.reason.message.includes('ResizeObserver loop')) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-        }
-      });
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Financial SaaS Platform</title>
-    <meta name="description" content="Your website description goes here. You can edit this text later." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Blank App</title>
+    <script>
+      const observerErr = 'ResizeObserver loop completed with undelivered notifications.';
+      window.addEventListener('error', (e) => {
+        if (e.message === observerErr || e.message.includes(observerErr)) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      });
+      const originalError = console.error;
+      console.error = (...args) => {
+        if (typeof args[0] === 'string' && args[0].includes(observerErr)) return;
+        originalError.call(console, ...args);
+      };
+    </script>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: white;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

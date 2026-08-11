@@ -1,104 +1,121 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
-import { Plus, User } from "lucide-react";
+import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { User } from "firebase/auth";
 
 type FloatingActionMenuProps = {
-options: {
-  label: string;
-  onClick: () => void;
-  Icon?: React.ReactNode;
-}[];
-className?: string;
-userPhotoUrl?: string | null;
+  options: {
+    label: string;
+    onClick: () => void;
+    Icon?: React.ReactNode;
+  }[];
+  className?: string;
+  user?: User;
 };
 
 const FloatingActionMenu = ({
-options,
-className,
-userPhotoUrl,
+  options,
+  className,
+  user,
 }: FloatingActionMenuProps) => {
-const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-const toggleMenu = () => {
-  setIsOpen(!isOpen);
-};
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
 
-return (
-  <div className={cn("relative", className)}>
-    <Button
-      onClick={toggleMenu}
-      className={cn(
-        "w-7 h-7 rounded-full bg-[#11111198] hover:bg-[#111111d1] shadow-[0_0_15px_rgba(0,0,0,0.15)] p-0 overflow-hidden flex items-center justify-center text-white border-0"
-      )}
-    >
-      <motion.div
-        animate={{ rotate: isOpen ? 45 : 0 }}
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut",
-          type: "spring",
-          stiffness: 300,
-          damping: 20,
-        }}
-        className="flex items-center justify-center w-full h-full"
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div ref={menuRef} className={cn("relative z-50", className)}>
+      <Button
+        onClick={toggleMenu}
+        className="w-8 h-8 rounded-full p-0 overflow-hidden flex items-center justify-center bg-[#11111198] hover:bg-[#111111d1] shadow-[0_0_20px_rgba(0,0,0,0.2)] text-white"
       >
-        {isOpen ? (
-          <Plus className="w-4 h-4" />
-        ) : userPhotoUrl ? (
-          <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer" />
-        ) : (
-          <User className="w-4 h-4" />
-        )}
-      </motion.div>
-    </Button>
-
-    <AnimatePresence>
-      {isOpen && (
         <motion.div
-          initial={{ opacity: 0, x: 10, y: -10, filter: "blur(10px)" }}
-          animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, x: 10, y: -10, filter: "blur(10px)" }}
+          animate={{ rotate: isOpen && !user?.photoURL ? 45 : 0 }}
           transition={{
-            duration: 0.6,
+            duration: 0.3,
+            ease: "easeInOut",
             type: "spring",
             stiffness: 300,
             damping: 20,
-            delay: 0.1,
           }}
-          className="absolute top-full right-0 mt-2 z-50"
+          className="flex items-center justify-center w-full h-full relative group"
         >
-          <div className="flex flex-col items-end gap-2">
-            {options.map((option, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{
-                  duration: 0.3,
-                  delay: index * 0.05,
-                }}
-              >
-                <Button
-                  onClick={option.onClick}
-                  size="sm"
-                  className="flex items-center gap-2 bg-[#11111198] hover:bg-[#111111d1] shadow-[0_0_20px_rgba(0,0,0,0.2)] border-none rounded-xl backdrop-blur-sm"
-                >
-                  {option.Icon}
-                  <span className="text-white">{option.label}</span>
-                </Button>
-              </motion.div>
-            ))}
-          </div>
+          {user?.photoURL ? (
+            <>
+              <img src={user.photoURL} alt={user.displayName || "User"} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </>
+          ) : (
+            <Plus className="w-5 h-5" />
+          )}
         </motion.div>
-      )}
-    </AnimatePresence>
-  </div>
-);
+      </Button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: 10, y: -10, filter: "blur(10px)" }}
+            animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, x: 10, y: -10, filter: "blur(10px)" }}
+            transition={{
+              duration: 0.6,
+              type: "spring",
+              stiffness: 300,
+              damping: 20,
+              delay: 0.1,
+            }}
+            className="absolute top-12 right-0 mt-2"
+          >
+            <div className="flex flex-col items-end gap-2">
+              {options.map((option, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: index * 0.05,
+                  }}
+                >
+                  <Button
+                    onClick={option.onClick}
+                    size="sm"
+                    className="flex items-center gap-2 bg-[#11111198] hover:bg-[#111111d1] text-white font-normal shadow-[0_0_20px_rgba(0,0,0,0.2)] border-none rounded-xl backdrop-blur-sm"
+                  >
+                    {option.Icon}
+                    <span>{option.label}</span>
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 export default FloatingActionMenu;

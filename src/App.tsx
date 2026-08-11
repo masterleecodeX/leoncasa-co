@@ -1,176 +1,170 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from "react-router-dom";
+import { useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import Hero10Demo from "./components/demo/Hero10Demo";
+import NavigationMenuDemo from "./components/demo/NavigationMenuDemo";
+import TextGradientScrollDemo from "./components/demo/TextGradientScrollDemo";
+import CircularCarouselDemo from "./components/demo/CircularCarouselDemo";
+import TreeDemo from "./components/demo/TreeDemo";
+import { BlogDemo } from "./components/demo/BlogDemo";
+import Hero04Demo from "./components/demo/Hero04Demo";
+import { Footer } from "./components/ui/footer-section";
+import { Button } from "./components/ui/button";
+import AuthSectionTwo from "./components/ui/auth-section-2";
+import FloatingActionMenu from "./components/ui/floating-action-menu";
+import { Settings, User as UserIcon, LogOut } from "lucide-react";
+import { signOut } from "firebase/auth";
+import { auth } from "./lib/firebase";
+import { useAuth } from "./hooks/useAuth";
+import "./index.css";
 
-import React, { useState } from "react";
-import { Hero10, type Hero10Props } from "@/components/ui/hero-10";
-import { SignUpPage, MEDIA_URL } from "@/components/ui/signup-page";
-import { HomeView } from "@/views/HomeView";
-import { DonateView } from "@/views/DonateView";
-import { AdminView } from "@/views/AdminView";
-import { PostView } from "@/views/PostView";
-import EmptyComponent from "@/components/ui/empty5";
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
-import { AnimatePresence, motion } from "motion/react";
+function HeaderActions() {
+  const { user, loading, isAdmin } = useAuth();
+  const location = useLocation();
+  
+  if (loading) return <div className="ml-auto w-[76px] h-9" />; // Placeholder
 
-export default function App() {
-  const [currentView, setCurrentView] = useState<
-    "home" | "donate" | "signup" | "login" | "admin"
-  >("home");
+  if (user) {
+    const menuOptions = [
+      {
+        label: "Account",
+        Icon: <UserIcon className="w-4 h-4" />,
+        onClick: () => console.log("Account clicked"),
+      },
+      {
+        label: "Settings",
+        Icon: <Settings className="w-4 h-4" />,
+        onClick: () => console.log("Settings clicked"),
+      },
+    ];
 
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem("isLoggedIn") === "true";
-  });
-
-  const [userEmail, setUserEmail] = useState(() => {
-    return localStorage.getItem("userEmail") || "";
-  });
-
-  const [userPhotoUrl, setUserPhotoUrl] = useState(() => {
-    return localStorage.getItem("userPhotoUrl") || "";
-  });
-  const [selectedPost, setSelectedPost] = useState<any>(null);
-
-  const adminEmails = ["kannyio08@gmail.com", "mleongholami08@gmail.com"];
-  const isAdmin = isLoggedIn && adminEmails.includes(userEmail);
-
-  const hero10Values = {
-    title: "Build faster interfaces",
-    titleLine2Prefix: "with",
-    titleHighlight: "Ready-Made Blocks",
-    description:
-      "Compose beautiful products from accessible, production-ready UI blocks that drop straight into your codebase.",
-    socialProof: "Trusted by 2k+ product teams",
-    images: [
-      "https://images.unsplash.com/photo-1685013640715-8701bbaa2207?q=80&w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "https://images.unsplash.com/photo-1746467364902-ab40952e33fe?q=80&w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "https://images.unsplash.com/photo-1578301978018-3005759f48f7?q=80&w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    ],
-    imageAlts: ["Design detail", "Product interface", "Layout composition"],
-    animation: "subtle",
-    primaryCTA: {
-      ctaEnabled: true,
-      text: "Let's Start",
-      link: "#",
-      variant: "default",
-      size: "default",
-      onClick: () => setCurrentView("donate"),
-    },
-    secondaryCTA: {
-      ctaEnabled: !isLoggedIn,
-      text: "Sign Up",
-      link: "#",
-      variant: "outline",
-      size: "default",
-      onClick: () => setCurrentView("signup"),
-    },
-  } satisfies Hero10Props;
-
-  React.useEffect(() => {
-    localStorage.setItem("isLoggedIn", String(isLoggedIn));
-    localStorage.setItem("userEmail", userEmail);
-    localStorage.setItem("userPhotoUrl", userPhotoUrl);
-  }, [isLoggedIn, userEmail, userPhotoUrl]);
-
-  React.useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [currentView, isLoggedIn]);
-
-  React.useEffect(() => {
-    // Preload the sign-up page media to eliminate latency
-    if (MEDIA_URL.match(/\.(mp4|webm|ogg)$/i)) {
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "video";
-      link.href = MEDIA_URL;
-      document.head.appendChild(link);
-    } else {
-      const img = new Image();
-      img.src = MEDIA_URL;
+    if (isAdmin) {
+      menuOptions.push({
+        label: "Admin Panel",
+        Icon: <Settings className="w-4 h-4" />,
+        onClick: () => console.log("Admin Panel clicked"),
+      });
     }
-  }, []);
 
-  const headerProps = {
-    isLoggedIn,
-    isAdmin,
-    userPhotoUrl,
-    onHome: () => setCurrentView("home"),
-    onLogin: () => setCurrentView("login"),
-    onSignup: () => setCurrentView("signup"),
-    onAdmin: () => setCurrentView("admin"),
-    onViewPost: (post?: any) => {
-      setSelectedPost(post || null);
-      setCurrentView("post");
-    },
-    onLogout: () => {
-      setIsLoggedIn(false);
-      setUserEmail("");
-      setUserPhotoUrl("");
-    },
-  };
+    menuOptions.push({
+      label: "Logout",
+      Icon: <LogOut className="w-4 h-4" />,
+      onClick: () => signOut(auth),
+    });
 
-  const renderView = () => {
-    switch (currentView) {
-      case "post":
-        return <PostView {...headerProps} post={selectedPost} />;
-      case "admin":
-        return <AdminView {...headerProps} />;
-      case "signup":
-        return (
-          <motion.div
-            key="signup"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="min-h-screen"
-          >
-            <SignUpPage
-              onBack={() => setCurrentView("donate")}
-              initialIsLogin={false}
-              onSignUpSuccess={(email, photoUrl) => {
-                setIsLoggedIn(true);
-                setUserEmail(email);
-                setUserPhotoUrl(photoUrl || "");
-                setCurrentView("home");
-              }}
-            />
-          </motion.div>
-        );
-      case "login":
-        return (
-          <motion.div
-            key="login"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="min-h-screen"
-          >
-            <SignUpPage
-              onBack={() => setCurrentView("donate")}
-              initialIsLogin={true}
-              onSignUpSuccess={(email, photoUrl) => {
-                setIsLoggedIn(true);
-                setUserEmail(email);
-                setUserPhotoUrl(photoUrl || "");
-                setCurrentView("home");
-              }}
-            />
-          </motion.div>
-        );
-      case "donate":
-        return <DonateView {...headerProps} />;
-      case "home":
-      default:
-        return <HomeView hero10Values={hero10Values} {...headerProps} />;
-    }
-  };
+    return (
+      <div className="ml-auto flex items-center justify-end mr-4">
+        <FloatingActionMenu
+          user={user}
+          options={menuOptions}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 bg-background">
-      <EmptyComponent />
+    <Button asChild variant="outline" className="ml-auto rounded-xl border-[#d1d1d6] bg-white text-[#333333] hover:bg-gray-50 font-normal px-5 h-9 text-[15px] shadow-none">
+      <Link to="/login" state={{ from: location.pathname }}>Login</Link>
+    </Button>
+  );
+}
+
+function PageWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, filter: "blur(4px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, filter: "blur(4px)" }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
+      className="min-h-screen bg-background"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function HomePage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="flex w-full items-center justify-between p-4 relative z-50">
+        <NavigationMenuDemo />
+        <HeaderActions />
+      </header>
+      <main className="flex-1 relative z-10 bg-background">
+        <Hero10Demo />
+      </main>
+      <section className="w-full bg-background relative z-20">
+        <TextGradientScrollDemo />
+      </section>
+      <Footer />
     </div>
+  );
+}
+
+function GetStartedPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="flex w-full items-center justify-between p-4 relative z-50">
+        <NavigationMenuDemo showBackArrow={true} />
+        <HeaderActions />
+      </header>
+      <main className="flex-1 flex flex-col relative z-10 bg-background">
+        <CircularCarouselDemo />
+        <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-12 md:py-16 flex flex-col md:flex-row gap-8 lg:gap-12">
+          <div className="flex-shrink-0 w-full md:w-48 lg:w-56">
+            <TreeDemo />
+          </div>
+          <div className="flex-1 min-w-0">
+            <BlogDemo />
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function GalleryPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="flex w-full items-center justify-between p-4 relative z-50">
+        <NavigationMenuDemo showBackArrow={true} />
+        <HeaderActions />
+      </header>
+      <main className="flex-1 relative z-10 bg-background">
+        <Hero04Demo />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+        <Route path="/get-started" element={<PageWrapper><GetStartedPage /></PageWrapper>} />
+        <Route path="/gallery" element={<PageWrapper><GalleryPage /></PageWrapper>} />
+        <Route path="/login" element={<PageWrapper><AuthSectionTwo /></PageWrapper>} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <ScrollToTop />
+      <AnimatedRoutes />
+    </Router>
   );
 }

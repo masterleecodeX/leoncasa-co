@@ -1,9 +1,12 @@
 'use client'
+
 import * as React from 'react'
 import { motion, useReducedMotion, type Variants } from 'motion/react'
 import Balancer from 'react-wrap-balancer'
+
 import { cn } from '@/lib/utils'
-import { Cta, type CtaProps } from '@/components/ui/hero-10-utils/cta'
+
+import { Cta, type CtaProps } from '@/components/ui/hero-04-utils/cta'
 import { ArtCollage } from '@/components/ui/hero-04-utils/art-collage'
 
 export interface Hero04Props {
@@ -24,15 +27,15 @@ export interface Hero04Props {
 const variantStyles = {
   standard: {
     section: 'py-20 sm:py-28',
-    title: 'text-3xl sm:text-4xl md:text-5xl',
-    description: 'max-w-md text-sm sm:text-base',
+    title: 'text-4xl sm:text-5xl md:text-6xl',
+    description: 'max-w-md text-sm sm:text-base text-zinc-600',
     header: 'gap-5',
     grid: 'gap-12 lg:gap-16',
   },
   compact: {
     section: 'py-14 sm:py-20',
-    title: 'text-2xl sm:text-3xl md:text-4xl',
-    description: 'max-w-sm text-sm',
+    title: 'text-3xl sm:text-4xl md:text-5xl',
+    description: 'max-w-sm text-sm text-zinc-600',
     header: 'gap-4',
     grid: 'gap-10 lg:gap-12',
   },
@@ -75,6 +78,7 @@ function Reveal({
   children: React.ReactNode
 }>) {
   if (!active) return <div className={className}>{children}</div>
+
   return (
     <motion.div variants={variants ?? item} className={className}>
       {children}
@@ -99,19 +103,32 @@ export function Hero04({
   const reduce = useReducedMotion()
   const animate = animation === 'subtle' && !reduce
   const vs = variantStyles[variant]
+
   const backgroundElement = washImage && (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 z-0 aspect-2/3 mask-radial-[75%_100%] mask-radial-from-45% mask-radial-to-75% mask-radial-at-top opacity-75 blur-xl md:aspect-square lg:aspect-video dark:opacity-5"
+    <div 
+      className="pointer-events-none absolute inset-0 z-0"
+      style={{
+        maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 90%, transparent)',
+      }}
     >
-      <img
-        src={washImage}
-        alt=""
-        className="h-full w-full object-cover object-top"
-      />
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-75 blur-2xl dark:opacity-20"
+        style={{
+          maskImage: 'radial-gradient(ellipse 80% 100% at 50% 0%, black 30%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 100% at 50% 0%, black 30%, transparent 80%)',
+        }}
+      >
+        <img
+          src={washImage}
+          alt=""
+          className="h-full w-full object-cover object-top"
+        />
+      </div>
     </div>
   )
-  
+
   const titleElement = title && (
     <h1
       className={cn(
@@ -128,13 +145,13 @@ export function Hero04({
       )}
     </h1>
   )
-  
+
   const descriptionElement = description && (
     <p className={cn('text-muted-foreground', vs.description)}>
       <Balancer>{description}</Balancer>
     </p>
   )
-  
+
   const ctasElement = (primaryCTA?.ctaEnabled || secondaryCTA?.ctaEnabled) && (
     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-3">
       {primaryCTA?.ctaEnabled && <Cta cta={primaryCTA} />}
@@ -145,7 +162,7 @@ export function Hero04({
       )}
     </div>
   )
-  
+
   const mediaElement = (
     <ArtCollage
       primaryImage={primaryImage}
@@ -154,10 +171,11 @@ export function Hero04({
       secondaryAlt={secondaryAlt}
     />
   )
-  
+
   return (
     <section className="bg-background relative isolate w-full overflow-hidden">
       {backgroundElement}
+
       <motion.div
         className={cn(
           'relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center px-6 lg:grid-cols-2',
@@ -177,7 +195,7 @@ export function Hero04({
           {descriptionElement}
           {ctasElement}
         </Reveal>
-    
+
         <Reveal active={animate} variants={mediaItem} className="w-full">
           {mediaElement}
         </Reveal>
@@ -185,3 +203,5 @@ export function Hero04({
     </section>
   )
 }
+
+export default Hero04;

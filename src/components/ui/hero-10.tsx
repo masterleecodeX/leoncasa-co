@@ -24,7 +24,7 @@ export interface Hero10Props {
 
 const variantStyles = {
   standard: {
-    section: 'py-12 sm:py-20',
+    section: 'py-20 sm:py-28',
     title: 'text-3xl sm:text-4xl md:text-5xl',
     description: 'max-w-lg text-sm sm:text-base',
     header: 'gap-5',
@@ -44,9 +44,9 @@ const variantStyles = {
 } as const
 
 const fanSlots = [
-  { width: 'w-[38%]', layout: '-mr-4 sm:-mr-8 z-10', rotate: -6, x: 48, ty: 24 },
+  { width: 'w-[38%]', layout: '-mr-8 z-10', rotate: -6, x: 48, ty: 24 },
   { width: 'w-[42%]', layout: 'z-20', rotate: 0, x: 0, ty: -8 },
-  { width: 'w-[38%]', layout: '-ml-4 sm:-ml-8 z-10', rotate: 6, x: -48, ty: 24 },
+  { width: 'w-[38%]', layout: '-ml-8 z-10', rotate: 6, x: -48, ty: 24 },
 ]
 
 const fanContainer: Variants = {
@@ -125,24 +125,45 @@ function ImageFan({
   cardAspect: string
   animate: boolean
 }>) {
+  const [order, setOrder] = React.useState([0, 1, 2]);
+
+  const handleCardClick = (originalIndex: number) => {
+    setOrder(prevOrder => {
+      const clickedPos = prevOrder.indexOf(originalIndex);
+      if (clickedPos === 1) return prevOrder; // Already center
+
+      const newOrder = [...prevOrder];
+      // Swap clicked with center
+      const temp = newOrder[1];
+      newOrder[1] = newOrder[clickedPos];
+      newOrder[clickedPos] = temp;
+      return newOrder;
+    });
+  };
+
   return (
     <motion.div
-      className="relative flex w-full items-center justify-center"
+      className="relative flex w-full items-center justify-center h-[350px]"
       variants={fanContainer}
       initial={animate ? 'hidden' : false}
       whileInView={animate ? 'visible' : undefined}
       animate={animate ? undefined : 'visible'}
       viewport={{ once: true, margin: '-80px' }}
     >
-      {images.slice(0, 3).map((src, i) => {
-        const slot = fanSlots[i] ?? fanSlots[1]
+      {order.map((originalIndex, currentPos) => {
+        const src = images[originalIndex];
+        if (!src) return null;
+
+        const slot = fanSlots[currentPos] ?? fanSlots[1]
         return (
           <motion.div
             key={src}
+            layout
             custom={slot}
             variants={fanCard}
+            onClick={() => handleCardClick(originalIndex)}
             className={cn(
-              'relative shrink-0 overflow-hidden rounded-xl shadow-xl outline outline-black/10 dark:outline-white/10',
+              'relative shrink-0 overflow-hidden rounded-xl shadow-2xl shadow-black/30 dark:shadow-black/60 outline outline-black/10 dark:outline-white/10 cursor-pointer',
               cardAspect,
               slot.width,
               slot.layout,
@@ -150,9 +171,9 @@ function ImageFan({
           >
             <img
               src={src}
-              alt={imageAlts?.[i] ?? ''}
+              alt={imageAlts?.[originalIndex] ?? ''}
               decoding="async"
-              className="size-full object-cover"
+              className="size-full object-cover pointer-events-none"
             />
           </motion.div>
         )
@@ -259,7 +280,7 @@ export function Hero10({
           {socialProofElement}
         </Reveal>
 
-        <div className={cn('mx-auto w-full', vs.fan)}>{mediaElement}</div>
+        <div className={cn('mx-auto w-full pt-12 md:pt-20', vs.fan)}>{mediaElement}</div>
       </motion.div>
     </section>
   )
