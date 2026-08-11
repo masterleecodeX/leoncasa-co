@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default-deny catch-all
+    // No one can read or write any data unless explicitly allowed by a future rule.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

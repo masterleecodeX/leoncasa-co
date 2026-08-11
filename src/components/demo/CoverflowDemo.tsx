@@ -13,9 +13,9 @@ const SLIDES = [
     title: "Tidewater",
     subtitle: "Long Player",
     meta: [
-      { label: "Year", value: "2019" },
-      { label: "Producer", value: "Ada Ferrow" },
-      { label: "Length", value: "3:42" },
+      { label: "Price", value: "2019" },
+      { label: "Material", value: "Ada Ferrow" },
+      { label: "Dimensions", value: "3:42" },
     ],
   },
   {
@@ -24,9 +24,9 @@ const SLIDES = [
     title: "Nightshift",
     subtitle: "Long Player",
     meta: [
-      { label: "Year", value: "2021" },
-      { label: "Producer", value: "Kell Mora" },
-      { label: "Length", value: "4:08" },
+      { label: "Price", value: "2021" },
+      { label: "Material", value: "Kell Mora" },
+      { label: "Dimensions", value: "4:08" },
     ],
   },
   {
@@ -35,9 +35,9 @@ const SLIDES = [
     title: "Overexposed",
     subtitle: "Single",
     meta: [
-      { label: "Year", value: "2018" },
-      { label: "Producer", value: "Juno Vale" },
-      { label: "Length", value: "2:57" },
+      { label: "Price", value: "2018" },
+      { label: "Material", value: "Juno Vale" },
+      { label: "Dimensions", value: "2:57" },
     ],
   },
   {
@@ -46,9 +46,9 @@ const SLIDES = [
     title: "Slow Bloom",
     subtitle: "EP",
     meta: [
-      { label: "Year", value: "2022" },
-      { label: "Producer", value: "Rue Alcott" },
-      { label: "Length", value: "3:15" },
+      { label: "Price", value: "2022" },
+      { label: "Material", value: "Rue Alcott" },
+      { label: "Dimensions", value: "3:15" },
     ],
   },
   {
@@ -57,9 +57,9 @@ const SLIDES = [
     title: "Open Palm",
     subtitle: "Single",
     meta: [
-      { label: "Year", value: "2020" },
-      { label: "Producer", value: "Ada Ferrow" },
-      { label: "Length", value: "3:01" },
+      { label: "Price", value: "2020" },
+      { label: "Material", value: "Ada Ferrow" },
+      { label: "Dimensions", value: "3:01" },
     ],
   },
   {
@@ -68,9 +68,9 @@ const SLIDES = [
     title: "Low Country",
     subtitle: "Long Player",
     meta: [
-      { label: "Year", value: "2017" },
-      { label: "Producer", value: "Sim Oyo" },
-      { label: "Length", value: "5:20" },
+      { label: "Price", value: "2017" },
+      { label: "Material", value: "Sim Oyo" },
+      { label: "Dimensions", value: "5:20" },
     ],
   },
   {
@@ -79,9 +79,9 @@ const SLIDES = [
     title: "Dry Season",
     subtitle: "EP",
     meta: [
-      { label: "Year", value: "2016" },
-      { label: "Producer", value: "Juno Vale" },
-      { label: "Length", value: "2:44" },
+      { label: "Price", value: "2016" },
+      { label: "Material", value: "Juno Vale" },
+      { label: "Dimensions", value: "2:44" },
     ],
   },
   {
@@ -90,9 +90,9 @@ const SLIDES = [
     title: "Understory",
     subtitle: "Single",
     meta: [
-      { label: "Year", value: "2023" },
-      { label: "Producer", value: "Kell Mora" },
-      { label: "Length", value: "3:38" },
+      { label: "Price", value: "2023" },
+      { label: "Material", value: "Kell Mora" },
+      { label: "Dimensions", value: "3:38" },
     ],
   },
   {
@@ -101,9 +101,9 @@ const SLIDES = [
     title: "Paper Lantern",
     subtitle: "Single",
     meta: [
-      { label: "Year", value: "2021" },
-      { label: "Producer", value: "Rue Alcott" },
-      { label: "Length", value: "2:19" },
+      { label: "Price", value: "2021" },
+      { label: "Material", value: "Rue Alcott" },
+      { label: "Dimensions", value: "2:19" },
     ],
   },
   {
@@ -112,9 +112,9 @@ const SLIDES = [
     title: "Still Water",
     subtitle: "Long Player",
     meta: [
-      { label: "Year", value: "2015" },
-      { label: "Producer", value: "Ada Ferrow" },
-      { label: "Length", value: "4:51" },
+      { label: "Price", value: "2015" },
+      { label: "Material", value: "Ada Ferrow" },
+      { label: "Dimensions", value: "4:51" },
     ],
   },
   {
@@ -123,9 +123,9 @@ const SLIDES = [
     title: "Third Rail",
     subtitle: "EP",
     meta: [
-      { label: "Year", value: "2024" },
-      { label: "Producer", value: "Sim Oyo" },
-      { label: "Length", value: "3:07" },
+      { label: "Price", value: "2024" },
+      { label: "Material", value: "Sim Oyo" },
+      { label: "Dimensions", value: "3:07" },
     ],
   },
   {
@@ -134,9 +134,9 @@ const SLIDES = [
     title: "Undertow",
     subtitle: "Single",
     meta: [
-      { label: "Year", value: "2020" },
-      { label: "Producer", value: "Juno Vale" },
-      { label: "Length", value: "3:29" },
+      { label: "Price", value: "2020" },
+      { label: "Material", value: "Juno Vale" },
+      { label: "Dimensions", value: "3:29" },
     ],
   },
 ];

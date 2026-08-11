@@ -4,9 +4,6 @@ import { motion, AnimatePresence } from "motion/react";
 import Hero10Demo from "./components/demo/Hero10Demo";
 import NavigationMenuDemo from "./components/demo/NavigationMenuDemo";
 import TextGradientScrollDemo from "./components/demo/TextGradientScrollDemo";
-import CircularCarouselDemo from "./components/demo/CircularCarouselDemo";
-import TreeDemo from "./components/demo/TreeDemo";
-import { BlogDemo } from "./components/demo/BlogDemo";
 import Hero04Demo from "./components/demo/Hero04Demo";
 import LayoutToggleDemo from "./components/demo/LayoutToggleDemo";
 import CoverflowDemo from "./components/demo/CoverflowDemo";
@@ -14,10 +11,11 @@ import { Footer } from "./components/ui/footer-section";
 import { Button } from "./components/ui/button";
 import AuthSectionTwo from "./components/ui/auth-section-2";
 import FloatingActionMenu from "./components/ui/floating-action-menu";
-import { Settings, User as UserIcon, LogOut, ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { Settings, User as UserIcon, LogOut } from "lucide-react";
 import { signOut } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import "./index.css";
 
 function ScrollToTop() {
@@ -158,9 +156,11 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <AnimatedRoutes />
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <ScrollToTop />
+        <AnimatedRoutes />
+      </Router>
+    </ErrorBoundary>
   );
 }

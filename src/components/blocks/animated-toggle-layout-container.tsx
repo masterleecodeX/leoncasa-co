@@ -2,17 +2,19 @@
 
 import * as React from "react"
 import { HTMLMotionProps, LayoutGroup, motion } from "motion/react"
+import { LayoutList, Columns2, Columns4 } from "lucide-react"
 
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 
 const LAYOUT_CONFIGS = [
-  { mode: "list", className: "flex flex-col space-y-4", label: "list view" },
-  { mode: "2col", className: "grid grid-cols-2 gap-4", label: "2 column view" },
+  { mode: "list", className: "flex flex-col space-y-4", label: "list view", icon: LayoutList },
+  { mode: "2col", className: "grid grid-cols-2 gap-4", label: "2 column view", icon: Columns2 },
   {
     mode: "4col",
     className: "grid grid-cols-2 md:grid-cols-4 gap-4",
     label: "4 column view",
+    icon: Columns4,
   },
 ]
 const ANIMATION_VARIANTS = {
@@ -33,6 +35,7 @@ interface LayoutButtonProps {
   onClick: () => void
   isMiddle: boolean
   label: string
+  icon: React.ElementType
 }
 
 const LayoutButton = ({
@@ -40,11 +43,12 @@ const LayoutButton = ({
   onClick,
   isMiddle,
   label,
+  icon: Icon
 }: LayoutButtonProps) => (
   <div className="relative">
     {isSelected && (
       <motion.div
-        className="absolute inset-0 bg-slate-900"
+        className="absolute inset-0 bg-white rounded-md shadow-sm"
         layoutId="layout-toggle-buttons"
       />
     )}
@@ -53,15 +57,15 @@ const LayoutButton = ({
       variant="ghost"
       size="sm"
       className={cn(
-        "relative rounded-none bg-transparent hover:bg-slate-100 hover:text-slate-900",
-        isMiddle && "border-x border-slate-900",
+        "relative z-10 rounded-md px-3 hover:bg-transparent h-8 transition-colors",
         label === "4 column view"
           ? "cursor-not-allowed opacity-50 md:cursor-pointer md:opacity-100"
           : "",
-        isSelected ? "text-white hover:text-white hover:bg-slate-900" : "text-slate-900"
+        isSelected ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
       )}
     >
-      {label}
+      <Icon className="w-4 h-4" />
+      <span className="sr-only">{label}</span>
     </Button>
   </div>
 )
@@ -74,7 +78,7 @@ export const ContainerToggle = React.forwardRef<
   const currentConfig = LAYOUT_CONFIGS[modeIndex]
   return (
     <div ref={ref} {...props}>
-      <div className="mb-8 flex w-fit rounded-md border border-slate-900 overflow-hidden bg-white">
+      <div className="mb-8 flex w-fit rounded-lg bg-slate-100 p-1 mx-auto sm:mx-0">
         {LAYOUT_CONFIGS.map((config, idx) => (
           <LayoutButton
             key={config.mode}
@@ -82,6 +86,7 @@ export const ContainerToggle = React.forwardRef<
             onClick={() => setModeIndex(idx)}
             isMiddle={idx > 0 && idx < LAYOUT_CONFIGS.length - 1}
             label={config.label}
+            icon={config.icon}
           />
         ))}
       </div>
