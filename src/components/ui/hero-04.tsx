@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { motion, useReducedMotion, type Variants } from 'motion/react'
 import Balancer from 'react-wrap-balancer'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -13,7 +14,8 @@ export interface Hero04Props {
   title: string
   washImage?: string
   titleLine2?: string
-  description: string
+  description?: string
+  meta?: { label: string; value: string }[]
   primaryImage: string
   secondaryImage: string
   primaryAlt?: string
@@ -90,6 +92,7 @@ export function Hero04({
   title,
   titleLine2,
   description,
+  meta,
   washImage,
   primaryImage,
   secondaryImage,
@@ -146,10 +149,38 @@ export function Hero04({
     </h1>
   )
 
-  const descriptionElement = description && (
-    <p className={cn('text-slate-600', vs.description)}>
-      <Balancer>{description}</Balancer>
-    </p>
+  const descriptionElement = (description || meta) && (
+    <div className={cn('text-slate-600', vs.description)}>
+      {description && <Balancer>{description}</Balancer>}
+      {meta && meta.length > 0 && (
+        <div className="mt-8 flex items-center gap-8 w-full">
+          <button
+            type="button"
+            aria-label="Previous slide"
+            className="p-2 text-slate-400 transition hover:text-slate-900"
+          >
+            <ChevronLeft className="size-6" />
+          </button>
+          
+          <dl className="w-full sm:w-[230px] max-w-[230px] shrink-0 text-[12px]">
+            {meta.map((row) => (
+              <div key={row.label} className="flex justify-between py-[5px]">
+                <dt className="text-slate-500">{row.label}</dt>
+                <dd className="font-medium text-slate-900">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+          
+          <button
+            type="button"
+            aria-label="Next slide"
+            className="p-2 text-slate-400 transition hover:text-slate-900"
+          >
+            <ChevronRight className="size-6" />
+          </button>
+        </div>
+      )}
+    </div>
   )
 
   const ctasElement = (primaryCTA?.ctaEnabled || secondaryCTA?.ctaEnabled) && (

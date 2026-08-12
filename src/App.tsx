@@ -146,7 +146,6 @@ function GetStartedPage() {
       </header>
       <main className="flex-1 flex flex-col relative z-10 bg-white -mt-[100px] pt-12 pb-24">
         <Hero04Demo />
-        <CoverflowDemo />
         <LayoutToggleDemo />
       </main>
     </div>
