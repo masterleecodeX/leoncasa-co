@@ -102,14 +102,13 @@ function HeaderActions() {
   }
 
   return (
-    <div className="ml-auto flex items-center justify-end mr-4">
-      <button 
-        onClick={() => signInWithPopup(auth, googleProvider)}
-        className="px-4 py-2 text-sm font-medium text-slate-900 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
-      >
-        Admin Sign In
-      </button>
-    </div>
+    <button 
+      onClick={() => signInWithPopup(auth, googleProvider)}
+      className="fixed bottom-1 right-1 p-3 text-[10px] leading-none text-slate-400 opacity-20 hover:opacity-100 transition-opacity z-50 focus:outline-none"
+      title="."
+    >
+      .
+    </button>
   );
 }
 
