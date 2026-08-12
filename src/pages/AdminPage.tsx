@@ -248,16 +248,113 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
   );
 }
 
+
+function AdminCoverflowSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: string) => void }) {
+  const [localSlide, setLocalSlide] = useState(slide);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isDirty) {
+      setLocalSlide(slide);
+    }
+  }, [slide, isDirty]);
+
+  const handleChange = (field: string, value: any) => {
+    setLocalSlide((prev: any) => ({ ...prev, [field]: value }));
+    setIsDirty(true);
+  };
+
+  const handleMetaChange = (label: string, value: string) => {
+    const newMeta = [...(localSlide.meta || [])];
+    const index = newMeta.findIndex((m: any) => m.label === label);
+    if (index >= 0) {
+      newMeta[index].value = value;
+    } else {
+      newMeta.push({ label, value });
+    }
+    handleChange("meta", newMeta);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await setDoc(doc(db, "coverflow", slide.id), localSlide, { merge: true });
+      setIsDirty(false);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save changes.");
+    }
+    setIsSaving(false);
+  };
+
+  return (
+    <div className="p-5 border border-gray-200/75 rounded-[20px] flex flex-col gap-6 bg-white shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="shrink-0 flex flex-col gap-2 w-32">
+          <span className="text-xs font-medium text-gray-500 text-center">Slide Image</span>
+          <img src={localSlide.src} alt="Slide" className="w-full h-32 object-cover rounded-2xl border border-gray-100 shadow-sm" />
+          <label className="cursor-pointer text-center w-full px-2 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-[10px] font-medium text-gray-700 transition-colors">
+            Change Image
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => handleChange("src", b64))} className="hidden" />
+          </label>
+        </div>
+        
+        <div className="flex-1 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-gray-500 ml-1">Title</label>
+              <input value={localSlide.title || ""} onChange={(e) => handleChange("title", e.target.value)} className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-gray-500 ml-1">Subtitle</label>
+              <input value={localSlide.subtitle || ""} onChange={(e) => handleChange("subtitle", e.target.value)} className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all" />
+            </div>
+          </div>
+          
+          <div className="pt-2 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-gray-500 ml-1">Price (Meta)</label>
+              <input value={getMetaValue(localSlide, "Price")} onChange={(e) => handleMetaChange("Price", e.target.value)} className="w-full px-4 py-2 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 transition-all" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-gray-500 ml-1">Material (Meta)</label>
+              <input value={getMetaValue(localSlide, "Material")} onChange={(e) => handleMetaChange("Material", e.target.value)} className="w-full px-4 py-2 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 transition-all" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[13px] font-medium text-gray-500 ml-1">Dimensions (Meta)</label>
+              <input value={getMetaValue(localSlide, "Dimensions")} onChange={(e) => handleMetaChange("Dimensions", e.target.value)} className="w-full px-4 py-2 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 transition-all" />
+            </div>
+          </div>
+        </div>
+
+        <div className="shrink-0 flex flex-col gap-2 self-start ml-auto">
+          <Button onClick={handleSave} disabled={!isDirty || isSaving} className={`rounded-xl px-4 py-2 text-sm shadow-sm transition-all gap-2 ${isDirty ? 'bg-black hover:bg-gray-800 text-white border-0' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>
+            <Save className="w-4 h-4" /> {isSaving ? "Saving..." : "Save"}
+          </Button>
+          <button onClick={() => onDelete(slide.id)} className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors flex items-center justify-center">
+            <Trash className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const [heroSlides, setHeroSlides] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
+  const [coverflowSlides, setCoverflowSlides] = useState<any[]>([]);
   const [admins, setAdmins] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"hero_gallery" | "products" | "admins">("hero_gallery");
+  const [activeTab, setActiveTab] = useState<"hero_gallery" | "products" | "admins" | "coverflow">("hero_gallery");
   const [newAdminEmail, setNewAdminEmail] = useState("");
 
   useEffect(() => {
+        const unsubCoverflow = onSnapshot(collection(db, "coverflow"), (snapshot) => {
+      setCoverflowSlides(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
     const unsubHero = onSnapshot(collection(db, "hero_gallery"), (snapshot) => {
       setHeroSlides(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
@@ -270,6 +367,7 @@ export default function AdminPage() {
 
     return () => {
       unsubHero();
+      unsubCoverflow();
       unsubProducts();
       unsubAdmins();
     };
@@ -306,6 +404,26 @@ export default function AdminPage() {
     reader.readAsDataURL(file);
   };
 
+  
+  const handleAddCoverflowSlide = async () => {
+    const newSlide = {
+      title: "New Slide",
+      subtitle: "Subtitle",
+      src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=640&auto=format&fit=crop",
+      alt: "Slide",
+      meta: [
+        { label: "Price", value: "2024" },
+        { label: "Material", value: "Material" },
+        { label: "Dimensions", value: "Dimensions" },
+      ],
+      order: coverflowSlides.length
+    };
+    await addDoc(collection(db, "coverflow"), newSlide);
+  };
+
+  const handleDeleteCoverflowSlide = async (id: string) => {
+    await deleteDoc(doc(db, "coverflow", id));
+  };
   
   const handleAddHeroSlide = async () => {
     const newSlide = {
@@ -382,6 +500,12 @@ export default function AdminPage() {
           >
             Hero Gallery
           </button>
+          <button 
+            className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'coverflow' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
+            onClick={() => setActiveTab("coverflow")}
+          >
+            Carousel Slides
+          </button>
 
           <button 
             className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'products' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
@@ -415,7 +539,23 @@ export default function AdminPage() {
         </div>
       )}
 
-        {activeTab === "products" && (
+              {activeTab === "coverflow" && (
+        <div className="space-y-6">
+          <div className="flex justify-between items-end">
+            <h2 className="text-xl font-medium tracking-tight text-gray-900">Carousel Slides</h2>
+            <Button onClick={handleAddCoverflowSlide} className="rounded-full px-5 shadow-sm hover:shadow transition-all gap-2 bg-black hover:bg-gray-800 text-white border-0">
+              <Plus className="w-4 h-4" /> Add Slide
+            </Button>
+          </div>
+          <div className="space-y-5">
+            {coverflowSlides.map(slide => (
+              <AdminCoverflowSlideCard key={slide.id} slide={slide} onDelete={handleDeleteCoverflowSlide} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "products" && (
         <div className="space-y-6">
           <div className="flex justify-between items-end">
             <h2 className="text-xl font-medium tracking-tight text-gray-900">Grid Products</h2>
