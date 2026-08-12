@@ -45,7 +45,7 @@ const LayoutButton = ({
   label,
   icon: Icon
 }: LayoutButtonProps) => (
-  <div className="relative">
+  <div className={cn("relative", label === "4 column view" ? "hidden sm:block" : "")}>
     {isSelected && (
       <motion.div
         className="absolute inset-0 bg-white rounded-md shadow-sm"
@@ -58,9 +58,6 @@ const LayoutButton = ({
       size="sm"
       className={cn(
         "relative z-10 rounded-md px-3 hover:bg-transparent h-8 transition-colors",
-        label === "4 column view"
-          ? "cursor-not-allowed opacity-50 md:cursor-pointer md:opacity-100"
-          : "",
         isSelected ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
       )}
     >
@@ -74,7 +71,7 @@ export const ContainerToggle = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ children, className, ...props }, ref) => {
-  const [modeIndex, setModeIndex] = React.useState(2)
+  const [modeIndex, setModeIndex] = React.useState(1)
   const currentConfig = LAYOUT_CONFIGS[modeIndex]
   return (
     <div ref={ref} {...props}>

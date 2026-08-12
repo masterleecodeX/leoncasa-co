@@ -13,6 +13,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
+    match /hero_gallery/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
     match /coverflow/{docId} {
       allow read: if true;
       allow write: if isAdmin();

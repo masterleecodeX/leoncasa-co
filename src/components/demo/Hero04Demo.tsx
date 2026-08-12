@@ -1,25 +1,92 @@
+import { useState, useEffect } from 'react'
+import { collection, onSnapshot } from 'firebase/firestore'
+import { db } from '../../lib/firebase'
 import { Hero04, type Hero04Props } from '@/components/ui/hero-04'
 import { useTranslation } from 'react-i18next'
+import { motion, AnimatePresence } from 'motion/react'
+import { useCurrency } from '@/hooks/useCurrency'
 
 export default function Hero04Demo() {
   const { t } = useTranslation();
+  const { formatPrice } = useCurrency();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const CACHE_KEY = "hero_gallery_cache";
+  
+  const [slides, setSlides] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
 
-  const values = {
-    title: t('A gallery for the work'),
-    titleLine2: t('you are proud of.'),
-    meta: [
-      { label: "Price", value: "2024" },
-      { label: "Material", value: "Canvas" },
-      { label: "Dimensions", value: "ddd" },
-    ],
-    washImage:
-      'https://images.unsplash.com/photo-1685013640715-8701bbaa2207?q=80&w=2198&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    primaryImage:
-      'https://images.unsplash.com/photo-1746467364902-ab40952e33fe?q=80&w=1131&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    secondaryImage:
-      'https://images.unsplash.com/photo-1578301978018-3005759f48f7?q=80&w=1144&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    primaryAlt: 'Featured artwork',
-    secondaryAlt: 'Abstract artwork',
+  const [loading, setLoading] = useState(() => {
+    try {
+      return localStorage.getItem(CACHE_KEY) ? false : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    const q = collection(db, "hero_gallery");
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
+        setSlides(data);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } else {
+        setSlides([]);
+        localStorage.setItem(CACHE_KEY, JSON.stringify([]));
+      }
+      setLoading(false);
+    }, (err) => {
+      console.error(err);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full bg-white py-20 min-h-[600px] flex flex-col items-center justify-center gap-4">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
+        <p className="text-sm text-slate-500 font-medium">Loading gallery...</p>
+      </div>
+    );
+  }
+
+  if (slides.length === 0) {
+    return (
+      <div className="w-full bg-white py-20 min-h-[600px] flex flex-col items-center justify-center gap-4">
+        <p className="text-sm text-slate-500 font-medium">No slides found. Add them in the admin menu.</p>
+      </div>
+    );
+  }
+
+  // Ensure index is within bounds
+  const activeIndex = currentIndex >= slides.length ? 0 : currentIndex;
+  const currentSlide = slides[activeIndex];
+  const formattedMeta = (currentSlide.meta || []).map((m: any) => {
+    if (m.label === "Price" && !isNaN(Number(m.value))) {
+      return { ...m, value: formatPrice(Number(m.value)) };
+    }
+    return m;
+  });
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const slideProps = {
+    ...currentSlide,
+    meta: formattedMeta,
     animation: 'subtle',
     primaryCTA: {
       ctaEnabled: true,
@@ -33,8 +100,21 @@ export default function Hero04Demo() {
       text: t('See examples'),
       link: '#',
       variant: 'link',
-    },
-  } satisfies Hero04Props
+    }
+  } as Hero04Props;
 
-  return <Hero04 {...values} />
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={activeIndex}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="w-full"
+      >
+        <Hero04 {...slideProps} onNext={handleNext} onPrev={handlePrev} />
+      </motion.div>
+    </AnimatePresence>
+  );
 }

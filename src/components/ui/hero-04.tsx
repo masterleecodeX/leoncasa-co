@@ -24,6 +24,8 @@ export interface Hero04Props {
   primaryCTA: CtaProps
   secondaryCTA?: CtaProps
   variant?: 'standard' | 'compact'
+  onPrev?: () => void
+  onNext?: () => void
 }
 
 const variantStyles = {
@@ -102,6 +104,8 @@ export function Hero04({
   primaryCTA,
   secondaryCTA,
   variant = 'standard',
+  onPrev,
+  onNext,
 }: Readonly<Hero04Props>) {
   const reduce = useReducedMotion()
   const animate = animation === 'subtle' && !reduce
@@ -135,7 +139,7 @@ export function Hero04({
   const titleElement = title && (
     <h1
       className={cn(
-        'text-slate-900 font-serif font-normal tracking-tight text-balance',
+        'text-slate-900 font-serif font-normal tracking-tight text-balance text-center lg:text-left',
         vs.title,
       )}
     >
@@ -150,13 +154,14 @@ export function Hero04({
   )
 
   const descriptionElement = (description || meta) && (
-    <div className={cn('text-slate-600', vs.description)}>
+    <div className={cn('text-slate-600 flex flex-col items-center lg:items-start text-center lg:text-left w-full', vs.description)}>
       {description && <Balancer>{description}</Balancer>}
       {meta && meta.length > 0 && (
-        <div className="mt-8 flex items-center justify-between sm:justify-start gap-4 sm:gap-8 w-full max-w-[340px] sm:max-w-none ml-3 sm:ml-0">
+        <div className="mt-8 flex items-center justify-center lg:justify-start gap-4 sm:gap-8 w-full max-w-[340px] sm:max-w-none mx-auto lg:mx-0">
           <button
             type="button"
             aria-label="Previous slide"
+            onClick={onPrev}
             className="p-1 sm:p-2 shrink-0 text-slate-400 transition hover:text-slate-900"
           >
             <ChevronLeft className="size-6" />
@@ -174,6 +179,7 @@ export function Hero04({
           <button
             type="button"
             aria-label="Next slide"
+            onClick={onNext}
             className="p-1 sm:p-2 shrink-0 text-slate-400 transition hover:text-slate-900"
           >
             <ChevronRight className="size-6" />
@@ -184,7 +190,7 @@ export function Hero04({
   )
 
   const ctasElement = (primaryCTA?.ctaEnabled || secondaryCTA?.ctaEnabled) && (
-    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-3">
+    <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-3 w-full lg:w-auto">
       {primaryCTA?.ctaEnabled && <Cta cta={primaryCTA} />}
       {secondaryCTA?.ctaEnabled && (
         <Cta
@@ -220,7 +226,7 @@ export function Hero04({
       >
         <Reveal
           active={animate}
-          className={cn('flex flex-col items-start', vs.header)}
+          className={cn('flex flex-col items-center lg:items-start w-full', vs.header)}
         >
           {titleElement}
           {descriptionElement}

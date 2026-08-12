@@ -64,18 +64,7 @@ function HeaderActions() {
   if (loading) return null;
 
   if (user) {
-    const menuOptions = [
-      {
-        label: "Account",
-        Icon: <UserIcon className="w-4 h-4" />,
-        onClick: () => console.log("Account clicked"),
-      },
-      {
-        label: "Settings",
-        Icon: <Settings className="w-4 h-4" />,
-        onClick: () => console.log("Settings clicked"),
-      },
-    ];
+    const menuOptions: Array<{label: string; Icon: React.ReactNode; onClick: () => void}> = [];
 
     if (isAdmin) {
       menuOptions.push({

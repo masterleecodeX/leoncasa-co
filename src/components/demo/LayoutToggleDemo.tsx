@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore"
 import { db } from "../../lib/firebase"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { ContainerToggle, CellToggle } from "../blocks/animated-toggle-layout-container"
+import { useCurrency } from "@/hooks/useCurrency"
 
 const DEFAULT_PRODUCTS = [
   {
@@ -65,13 +65,14 @@ const DEFAULT_PRODUCTS = [
 ]
 
 function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
+  const { formatPrice } = useCurrency();
   return (
     <div className="relative w-full h-full flex flex-col group">
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] flex justify-center items-center bg-gradient-to-r from-neutral-100 to-stone-200">
+      <div className="relative w-full aspect-square sm:aspect-[6/7] overflow-hidden bg-neutral-100">
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="mx-auto h-auto max-h-[85%] max-w-[85%] mix-blend-multiply object-contain transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 z-10" />
       </div>
@@ -80,10 +81,6 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
           <CardTitle className="text-lg font-semibold capitalize tracking-tight text-slate-900">
             {product.name}
           </CardTitle>
-          <CardDescription className="flex items-center gap-2 mt-1">
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0">Running</Badge>
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0">Performance</Badge>
-          </CardDescription>
         </CardHeader>
         <CardContent className="p-4 pt-0 pb-4 text-xs text-slate-500 line-clamp-2">
           High performance running shoes designed for ultimate comfort and speed. Experience the perfect blend of style and engineering.
@@ -91,7 +88,7 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
         <CardFooter className="p-4 pt-0 mt-auto gap-3 max-sm:flex-col max-sm:items-stretch">
           <div className="flex flex-col">
             <span className="text-[10px] font-medium uppercase text-slate-400">Price</span>
-            <span className="text-base font-semibold text-slate-900">${product.price}</span>
+            <span className="text-base font-semibold text-slate-900">{formatPrice(product.price)}</span>
           </div>
         </CardFooter>
       </Card>
