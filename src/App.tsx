@@ -17,7 +17,6 @@ import { auth, googleProvider } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import AdminPage from "./pages/AdminPage";
-import AdminLoginPage from "./pages/AdminLoginPage";
 import "./index.css";
 
 import { collection, onSnapshot } from "firebase/firestore";
@@ -102,7 +101,16 @@ function HeaderActions() {
     );
   }
 
-  return null;
+  return (
+    <div className="ml-auto flex items-center justify-end mr-4">
+      <button 
+        onClick={() => signInWithPopup(auth, googleProvider)}
+        className="px-4 py-2 text-sm font-medium text-slate-900 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+      >
+        Admin Sign In
+      </button>
+    </div>
+  );
 }
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
@@ -179,7 +187,6 @@ function AnimatedRoutes() {
         <Route path="/gallery" element={<PageWrapper><GalleryPage /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><AuthSectionTwo /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
-        <Route path="/admin-login" element={<PageWrapper><AdminLoginPage /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );
