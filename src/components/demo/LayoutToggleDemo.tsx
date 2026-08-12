@@ -1,10 +1,13 @@
+import { useEffect, useState } from "react"
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore"
+import { db } from "../../lib/firebase"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { ContainerToggle, CellToggle } from "../blocks/animated-toggle-layout-container"
 
-const PRODUCTS = [
+const DEFAULT_PRODUCTS = [
   {
     id: "item-9",
     name: "adidas",
@@ -61,7 +64,7 @@ const PRODUCTS = [
   },
 ]
 
-function GridProductCard({ product }: { product: typeof PRODUCTS[0] }) {
+function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
   return (
     <div className="relative w-full h-full flex flex-col group">
       <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] flex justify-center items-center bg-gradient-to-r from-neutral-100 to-stone-200">
@@ -97,10 +100,57 @@ function GridProductCard({ product }: { product: typeof PRODUCTS[0] }) {
 }
 
 export default function LayoutToggleDemo() {
+  const CACHE_KEY = "products_grid_cache";
+  
+  const [products, setProducts] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+  
+  const [loading, setLoading] = useState(() => {
+    try {
+      return localStorage.getItem(CACHE_KEY) ? false : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    const q = collection(db, "products")
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
+        setProducts(data);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } else {
+        setProducts([])
+        localStorage.setItem(CACHE_KEY, JSON.stringify([]));
+      }
+      setLoading(false)
+    }, (err) => {
+      console.error(err)
+      setLoading(false)
+    })
+    return () => unsubscribe()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 h-[400px] flex flex-col items-center justify-center gap-4 text-slate-900">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
+        <p className="text-sm text-slate-500 font-medium">Loading products...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">
       <ContainerToggle className="w-full">
-        {PRODUCTS.map((product) => (
+        {products.map((product) => (
           <CellToggle
             key={product.id}
             className="cursor-pointer overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm transition-shadow hover:shadow-md"

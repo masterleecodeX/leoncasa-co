@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", system-ui, sans-serif;
+  --font-serif: ui-serif, "New York", Georgia, Cambria, "Times New Roman", Times, serif;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -31,6 +35,12 @@
 }
 
 @layer base {
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   :root {
     --background: #ffffff;
     --foreground: #333333;

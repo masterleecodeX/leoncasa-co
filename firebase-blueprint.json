@@ -1,4 +1,51 @@
 {
-  "entities": {},
-  "firestore": {}
+  "entities": {
+    "CoverflowSlide": {
+      "title": "CoverflowSlide",
+      "description": "A slide for the coverflow carousel",
+      "type": "object",
+      "properties": {
+        "src": { "type": "string" },
+        "alt": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "meta": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "value": { "type": "string" }
+            }
+          }
+        },
+        "createdAt": { "type": "number" },
+        "order": { "type": "number" }
+      },
+      "required": ["src", "alt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "A product for the grid",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "price": { "type": "number" },
+        "createdAt": { "type": "number" },
+        "order": { "type": "number" }
+      },
+      "required": ["name", "imageUrl", "price"]
+    }
+  },
+  "firestore": {
+    "coverflow": {
+      "schema": "CoverflowSlide",
+      "description": "Slides for CoverflowCarousel"
+    },
+    "products": {
+      "schema": "Product",
+      "description": "Products for LayoutToggleGrid"
+    }
+  }
 }

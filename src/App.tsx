@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Hero10Demo from "./components/demo/Hero10Demo";
@@ -16,6 +16,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import AdminPage from "./pages/AdminPage";
 import "./index.css";
 
 function ScrollToTop() {
@@ -29,6 +30,7 @@ function ScrollToTop() {
 function HeaderActions() {
   const { user, loading, isAdmin } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   
   if (loading) return <div className="ml-auto w-[76px] h-9" />; // Placeholder
 
@@ -50,7 +52,7 @@ function HeaderActions() {
       menuOptions.push({
         label: "Admin Panel",
         Icon: <Settings className="w-4 h-4" />,
-        onClick: () => console.log("Admin Panel clicked"),
+        onClick: () => navigate("/admin"),
       });
     }
 
@@ -149,6 +151,7 @@ function AnimatedRoutes() {
         <Route path="/get-started" element={<PageWrapper><GetStartedPage /></PageWrapper>} />
         <Route path="/gallery" element={<PageWrapper><GalleryPage /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><AuthSectionTwo /></PageWrapper>} />
+        <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );

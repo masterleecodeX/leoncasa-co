@@ -1,12 +1,13 @@
-"use client";
-
+import { useEffect, useState } from "react";
 import { CoverflowCarousel } from "../ui/coverflow-carousel";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 const R2 = "https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/stock-images";
 const UNSPLASH = (id: string) =>
   `https://images.unsplash.com/photo-${id}?w=640&h=640&fit=crop&q=70&auto=format`;
  
-const SLIDES = [
+const DEFAULT_SLIDES = [
   {
     src: `${R2}/767d99bb371a54d0d36751e8cecae43c.jpg`,
     alt: "Diver silhouetted inside a sunset seascape shaped like a profile",
@@ -142,9 +143,56 @@ const SLIDES = [
 ];
  
 export default function CoverflowDemo() {
+  const CACHE_KEY = "coverflow_slides_cache";
+  
+  const [slides, setSlides] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+  
+  const [loading, setLoading] = useState(() => {
+    try {
+      return localStorage.getItem(CACHE_KEY) ? false : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    const q = collection(db, "coverflow");
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs.map(doc => doc.data() as any);
+        setSlides(data);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } else {
+        setSlides([]);
+        localStorage.setItem(CACHE_KEY, JSON.stringify([]));
+      }
+      setLoading(false);
+    }, (err) => {
+      console.error(err);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full overflow-hidden bg-white py-12 mb-12 h-[600px] flex flex-col items-center justify-center gap-4">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
+        <p className="text-sm text-slate-500 font-medium">Loading slides...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full overflow-hidden bg-white py-12 mb-12">
-      <CoverflowCarousel slides={SLIDES} showCaption />
+      <CoverflowCarousel slides={slides} showCaption showNavigation />
     </div>
   );
 }

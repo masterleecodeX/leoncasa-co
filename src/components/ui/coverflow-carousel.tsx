@@ -256,6 +256,10 @@ export function CoverflowCarousel({
   );
 
   const active = slides[selected];
+  
+  if (!slides || slides.length === 0) {
+    return <div className="w-full py-12 flex items-center justify-center text-slate-500">No slides available</div>;
+  }
 
   return (
     <div
@@ -325,26 +329,6 @@ export function CoverflowCarousel({
           </div>
         </div>
 
-        {showNavigation && (
-          <>
-            <button
-              type="button"
-              aria-label="Previous slide"
-              onClick={() => nudge(-1)}
-              className="absolute left-3 top-1/2 z-[200] -translate-y-1/2 rounded-full bg-white/70 p-2 text-slate-900 backdrop-blur transition hover:bg-white border border-gray-200 shadow-sm"
-            >
-              <ChevronLeft className="size-5" />
-            </button>
-            <button
-              type="button"
-              aria-label="Next slide"
-              onClick={() => nudge(1)}
-              className="absolute right-3 top-1/2 z-[200] -translate-y-1/2 rounded-full bg-white/70 p-2 text-slate-900 backdrop-blur transition hover:bg-white border border-gray-200 shadow-sm"
-            >
-              <ChevronRight className="size-5" />
-            </button>
-          </>
-        )}
       </div>
 
       {showCaption && active?.title && (
@@ -361,14 +345,36 @@ export function CoverflowCarousel({
             </p>
           )}
           {active.meta && active.meta.length > 0 && (
-            <dl className="mt-10 w-full max-w-[230px] text-[12px]">
-              {active.meta.map((row) => (
-                <div key={row.label} className="flex justify-between py-[5px]">
-                  <dt className="text-slate-500">{row.label}</dt>
-                  <dd className="font-medium text-slate-900">{row.value}</dd>
-                </div>
-              ))}
-            </dl>
+            <div className="mt-10 flex items-center justify-center gap-8 w-full max-w-[400px]">
+              {showNavigation && (
+                <button
+                  type="button"
+                  aria-label="Previous slide"
+                  onClick={() => nudge(-1)}
+                  className="p-2 text-slate-400 transition hover:text-slate-900"
+                >
+                  <ChevronLeft className="size-6" />
+                </button>
+              )}
+              <dl className="w-full max-w-[230px] text-[12px]">
+                {active.meta.map((row) => (
+                  <div key={row.label} className="flex justify-between py-[5px]">
+                    <dt className="text-slate-500">{row.label}</dt>
+                    <dd className="font-medium text-slate-900">{row.value}</dd>
+                  </div>
+                ))}
+              </dl>
+              {showNavigation && (
+                <button
+                  type="button"
+                  aria-label="Next slide"
+                  onClick={() => nudge(1)}
+                  className="p-2 text-slate-400 transition hover:text-slate-900"
+                >
+                  <ChevronRight className="size-6" />
+                </button>
+              )}
+            </div>
           )}
         </div>
       )}

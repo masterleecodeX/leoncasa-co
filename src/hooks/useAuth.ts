@@ -1,21 +1,44 @@
 import { useState, useEffect } from "react";
-import { auth } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    let unsubscribeAdmin: (() => void) | undefined;
+    
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
+      
+      if (currentUser?.email) {
+        if (currentUser.email === 'mleongholami08@gmail.com') {
+          setIsAdmin(true);
+          setLoading(false);
+        } else {
+          // Listen to admin doc changes
+          unsubscribeAdmin = onSnapshot(doc(db, "admins", currentUser.email), (doc) => {
+            setIsAdmin(doc.exists());
+            setLoading(false);
+          }, () => {
+            setIsAdmin(false);
+            setLoading(false);
+          });
+        }
+      } else {
+        setIsAdmin(false);
+        setLoading(false);
+      }
     });
-    return () => unsubscribe();
+    
+    return () => {
+      unsubscribe();
+      if (unsubscribeAdmin) unsubscribeAdmin();
+    };
   }, []);
-
-  const ADMIN_EMAILS = ["mleongholami08@gmail.com"];
-  const isAdmin = user?.email ? ADMIN_EMAILS.includes(user.email) : false;
 
   return { user, loading, isAdmin };
 }
