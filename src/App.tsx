@@ -19,11 +19,40 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import AdminPage from "./pages/AdminPage";
 import "./index.css";
 
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "./lib/firebase";
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+  return null;
+}
+
+function GlobalDataPrefetcher() {
+  useEffect(() => {
+    // Eagerly fetch and cache data on app load to eliminate latency
+    const unsubscribeCoverflow = onSnapshot(collection(db, "coverflow"), (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs.map(doc => doc.data() as any);
+        localStorage.setItem("coverflow_slides_cache", JSON.stringify(data));
+      }
+    });
+
+    const unsubscribeProducts = onSnapshot(collection(db, "products"), (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
+        localStorage.setItem("products_grid_cache", JSON.stringify(data));
+      }
+    });
+
+    return () => {
+      unsubscribeCoverflow();
+      unsubscribeProducts();
+    };
+  }, []);
+  
   return null;
 }
 
@@ -162,6 +191,7 @@ export default function App() {
     <ErrorBoundary>
       <Router>
         <ScrollToTop />
+        <GlobalDataPrefetcher />
         <AnimatedRoutes />
       </Router>
     </ErrorBoundary>
