@@ -125,10 +125,11 @@ function HomePage() {
         <NavigationMenuDemo />
         <HeaderActions />
       </header>
-      <main className="flex-1 relative z-10 bg-background">
+      <main className="flex-1 relative z-10 bg-background overflow-x-hidden">
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 sm:h-12 md:h-16 bg-gradient-to-t from-background to-transparent z-20"></div>
         <Hero10Demo />
       </main>
-      <section className="w-full bg-background relative z-20">
+      <section className="w-full bg-background relative z-0">
         <TextGradientScrollDemo />
       </section>
       <Footer />
@@ -159,7 +160,8 @@ function GalleryPage() {
         <NavigationMenuDemo showBackArrow={true} />
         <HeaderActions />
       </header>
-      <main className="flex-1 relative z-10 bg-background">
+      <main className="flex-1 relative z-10 bg-background overflow-x-hidden">
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 sm:h-12 md:h-16 bg-gradient-to-t from-background to-transparent z-20"></div>
         <Hero04Demo />
       </main>
       <Footer />

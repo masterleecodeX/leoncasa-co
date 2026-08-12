@@ -143,7 +143,7 @@ function ImageFan({
 
   return (
     <motion.div
-      className="relative flex w-full items-center justify-center h-[170px] sm:h-[240px] md:h-[350px]"
+      className="relative flex w-full items-center justify-center h-[190px] sm:h-[260px] md:h-[350px]"
       variants={fanContainer}
       initial={animate ? 'hidden' : false}
       whileInView={animate ? 'visible' : undefined}
@@ -252,7 +252,7 @@ export function Hero10({
   ) : null
 
   return (
-    <section className="bg-background relative isolate w-full overflow-hidden">
+    <section className="bg-background relative isolate w-full overflow-visible">
       <motion.div
         className={cn(
           'relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 text-center',
