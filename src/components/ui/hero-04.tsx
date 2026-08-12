@@ -153,18 +153,18 @@ export function Hero04({
     <div className={cn('text-slate-600', vs.description)}>
       {description && <Balancer>{description}</Balancer>}
       {meta && meta.length > 0 && (
-        <div className="mt-8 flex items-center gap-8 w-full">
+        <div className="mt-8 flex items-center justify-between sm:justify-start gap-4 sm:gap-8 w-full max-w-[340px] sm:max-w-none ml-3 sm:ml-0">
           <button
             type="button"
             aria-label="Previous slide"
-            className="p-2 text-slate-400 transition hover:text-slate-900"
+            className="p-1 sm:p-2 shrink-0 text-slate-400 transition hover:text-slate-900"
           >
             <ChevronLeft className="size-6" />
           </button>
           
-          <dl className="w-full sm:w-[230px] max-w-[230px] shrink-0 text-[12px]">
+          <dl className="w-full sm:w-[260px] max-w-[240px] sm:max-w-[260px] shrink-0 text-sm">
             {meta.map((row) => (
-              <div key={row.label} className="flex justify-between py-[5px]">
+              <div key={row.label} className="flex justify-between py-[7px]">
                 <dt className="text-slate-500">{row.label}</dt>
                 <dd className="font-medium text-slate-900">{row.value}</dd>
               </div>
@@ -174,7 +174,7 @@ export function Hero04({
           <button
             type="button"
             aria-label="Next slide"
-            className="p-2 text-slate-400 transition hover:text-slate-900"
+            className="p-1 sm:p-2 shrink-0 text-slate-400 transition hover:text-slate-900"
           >
             <ChevronRight className="size-6" />
           </button>

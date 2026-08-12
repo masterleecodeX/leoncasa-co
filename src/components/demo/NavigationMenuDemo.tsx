@@ -23,10 +23,8 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
   return (
     <>
       <div className="relative w-full max-w-[100vw] sm:max-w-none flex-1 min-w-0">
-        {/* Fades for mobile scroll */}
-        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none z-[60] sm:hidden" />
         
-        <div className="w-full overflow-x-auto [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
+        <div className="w-[calc(100%+2rem)] sm:w-full overflow-x-auto [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
           <div 
             className={cn(
               "fixed inset-0 z-40 bg-background/30 backdrop-blur-[2px] transition-all duration-500 ease-out",

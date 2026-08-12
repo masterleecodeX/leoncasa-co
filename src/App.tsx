@@ -12,11 +12,12 @@ import { Button } from "./components/ui/button";
 import AuthSectionTwo from "./components/ui/auth-section-2";
 import FloatingActionMenu from "./components/ui/floating-action-menu";
 import { Settings, User as UserIcon, LogOut } from "lucide-react";
-import { signOut } from "firebase/auth";
-import { auth } from "./lib/firebase";
+import { signOut, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import AdminPage from "./pages/AdminPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
 import "./index.css";
 
 import { collection, onSnapshot } from "firebase/firestore";
@@ -178,6 +179,7 @@ function AnimatedRoutes() {
         <Route path="/gallery" element={<PageWrapper><GalleryPage /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><AuthSectionTwo /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
+        <Route path="/admin-login" element={<PageWrapper><AdminLoginPage /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );
