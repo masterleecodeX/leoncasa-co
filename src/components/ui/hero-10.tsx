@@ -24,11 +24,11 @@ export interface Hero10Props {
 
 const variantStyles = {
   standard: {
-    section: 'py-20 sm:py-28',
+    section: 'py-6 sm:py-16 md:py-28',
     title: 'text-3xl sm:text-4xl md:text-5xl',
     description: 'max-w-lg text-sm sm:text-base',
-    header: 'gap-5',
-    content: 'gap-8 sm:gap-10',
+    header: 'gap-3 sm:gap-5',
+    content: 'gap-4 sm:gap-8 md:gap-10',
     fan: 'max-w-3xl',
     fanCard: 'aspect-4/5',
   },
@@ -143,7 +143,7 @@ function ImageFan({
 
   return (
     <motion.div
-      className="relative flex w-full items-center justify-center h-[350px]"
+      className="relative flex w-full items-center justify-center h-[170px] sm:h-[240px] md:h-[350px]"
       variants={fanContainer}
       initial={animate ? 'hidden' : false}
       whileInView={animate ? 'visible' : undefined}
@@ -280,7 +280,7 @@ export function Hero10({
           {socialProofElement}
         </Reveal>
 
-        <div className={cn('mx-auto w-full pt-12 md:pt-20', vs.fan)}>{mediaElement}</div>
+        <div className={cn('mx-auto w-full mt-4 md:mt-12', vs.fan)}>{mediaElement}</div>
       </motion.div>
     </section>
   )

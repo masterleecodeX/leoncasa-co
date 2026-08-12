@@ -22,14 +22,20 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
 
   return (
     <>
-      <div 
-        className={cn(
-          "fixed inset-0 z-40 bg-background/30 backdrop-blur-[2px] transition-all duration-500 ease-out",
-          value != null ? "opacity-100" : "opacity-0 pointer-events-none"
-        )} 
-      />
-      <NavigationMenu value={value} onValueChange={setValue} className="relative z-50">
-      <NavigationMenuList>
+      <div className="relative w-full max-w-[100vw] sm:max-w-none flex-1 min-w-0">
+        {/* Fades for mobile scroll */}
+        <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-transparent pointer-events-none z-[60] sm:hidden" />
+        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none z-[60] sm:hidden" />
+        
+        <div className="w-full overflow-x-auto [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div 
+            className={cn(
+              "fixed inset-0 z-40 bg-background/30 backdrop-blur-[2px] transition-all duration-500 ease-out",
+              value != null ? "opacity-100" : "opacity-0 pointer-events-none"
+            )} 
+          />
+          <NavigationMenu value={value} onValueChange={setValue} className="relative z-50 min-w-max mx-auto md:mx-0">
+      <NavigationMenuList className="flex-nowrap justify-start">
         {showBackArrow && (
           <NavigationMenuItem>
             <Link to="/" className={cn(navigationMenuTriggerStyle(), "px-2 mr-1")}>
@@ -145,6 +151,8 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
         <NavigationMenuPopup />
       </NavigationMenuPositioner>
     </NavigationMenu>
+    </div>
+    </div>
     </>
   );
 }

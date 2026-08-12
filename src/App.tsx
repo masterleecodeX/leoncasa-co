@@ -61,7 +61,7 @@ function HeaderActions() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  if (loading) return <div className="ml-auto w-[76px] h-9" />; // Placeholder
+  if (loading) return null;
 
   if (user) {
     const menuOptions = [
@@ -101,11 +101,7 @@ function HeaderActions() {
     );
   }
 
-  return (
-    <Button asChild variant="outline" className="ml-auto rounded-xl border-[#d1d1d6] bg-white text-[#333333] hover:bg-gray-50 font-normal px-5 h-9 text-[15px] shadow-none">
-      <Link to="/login" state={{ from: location.pathname }}>Login</Link>
-    </Button>
-  );
+  return null;
 }
 
 function PageWrapper({ children }: { children: React.ReactNode }) {

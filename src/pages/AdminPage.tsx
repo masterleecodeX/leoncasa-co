@@ -1,3 +1,4 @@
+import { useAuth } from "../hooks/useAuth";
 import React, { useState, useEffect } from "react";
 import { collection, onSnapshot, doc, setDoc, deleteDoc, addDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -251,6 +252,7 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
 }
 
 export default function AdminPage() {
+  const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const [slides, setSlides] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -275,6 +277,21 @@ export default function AdminPage() {
       unsubAdmins();
     };
   }, []);
+  if (loading) return <div className="p-8 text-center text-slate-500 flex items-center justify-center min-h-screen">Loading...</div>;
+  if (!user) return (
+    <div className="p-8 text-center flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <h2 className="text-2xl font-bold text-slate-900 mb-2">Admin Access</h2>
+      <p className="text-slate-500 mb-4">Please log in to continue.</p>
+      <Button onClick={() => navigate("/login")}>Go to Login</Button>
+    </div>
+  );
+  if (!isAdmin) return (
+    <div className="p-8 text-center flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <h2 className="text-2xl font-bold text-slate-900 mb-2">Access Denied</h2>
+      <p className="text-slate-500 mb-4">You do not have permission to view this page.</p>
+      <Button onClick={() => navigate("/")}>Return Home</Button>
+    </div>
+  );
 
   const getMetaValue = (slide: any, label: string) => {
     const metaItem = slide.meta?.find((m: any) => m.label === label);
