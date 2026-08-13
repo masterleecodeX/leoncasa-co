@@ -9,7 +9,7 @@ service cloud.firestore {
     }
     
     match /admins/{email} {
-      allow read: if isAdmin();
+      allow read: if isAdmin() || request.auth.token.email == email;
       allow write: if isAdmin();
     }
     

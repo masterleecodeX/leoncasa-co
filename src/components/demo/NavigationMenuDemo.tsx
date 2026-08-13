@@ -13,12 +13,37 @@ import {
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { siteConfig } from '@/config/site';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const components = siteConfig.navigation;
 
 export default function NavigationMenuDemo({ showBackArrow = false }: { showBackArrow?: boolean }) {
   const [value, setValue] = React.useState<any>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleIntroductionClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname !== '/get-started') {
+      navigate('/get-started');
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setValue(null); // Close the menu
+  };
+
+  const handleInstallationClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname !== '/get-started') {
+      navigate('/get-started', { state: { scrollTo: 'installation-section' } });
+    } else {
+      const el = document.getElementById('installation-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    setValue(null); // Close the menu
+  };
 
   return (
     <>
@@ -59,10 +84,10 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   </p>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="#" title="Introduction">
+              <ListItem href="#" title="Introduction" onClick={handleIntroductionClick}>
                 Re-usable components built using Radix UI and Tailwind CSS.
               </ListItem>
-              <ListItem href="#" title="Installation">
+              <ListItem href="#" title="Installation" onClick={handleInstallationClick}>
                 How to install dependencies and structure your app.
               </ListItem>
               <ListItem href="#" title="Typography">

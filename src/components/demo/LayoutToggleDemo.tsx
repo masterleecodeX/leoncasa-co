@@ -143,7 +143,7 @@ export default function LayoutToggleDemo() {
   }
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">
+    <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">
       <ContainerToggle className="w-full">
         {products.map((product) => (
           <CellToggle

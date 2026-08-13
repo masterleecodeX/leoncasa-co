@@ -48,7 +48,7 @@ const LayoutButton = ({
   <div className={cn("relative", label === "4 column view" ? "hidden sm:block" : "")}>
     {isSelected && (
       <motion.div
-        className="absolute inset-0 bg-white rounded-md shadow-sm"
+        className="absolute inset-0 bg-white rounded-md shadow-sm border border-slate-200/50"
         layoutId="layout-toggle-buttons"
       />
     )}
@@ -57,8 +57,8 @@ const LayoutButton = ({
       variant="ghost"
       size="sm"
       className={cn(
-        "relative z-10 rounded-md px-3 hover:bg-transparent h-8 transition-colors",
-        isSelected ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+        "relative z-10 rounded-md px-2.5 hover:bg-transparent h-7 transition-colors",
+        isSelected ? "text-slate-900" : "text-slate-400 hover:text-slate-900"
       )}
     >
       <Icon className="w-4 h-4" />
@@ -71,21 +71,29 @@ export const ContainerToggle = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ children, className, ...props }, ref) => {
-  const [modeIndex, setModeIndex] = React.useState(1)
+  const [modeIndex, setModeIndex] = React.useState(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
+      return 2
+    }
+    return 1
+  })
   const currentConfig = LAYOUT_CONFIGS[modeIndex]
+
   return (
     <div ref={ref} {...props}>
-      <div className="mb-8 flex w-fit rounded-lg bg-slate-100 p-1 mx-auto sm:mx-0">
-        {LAYOUT_CONFIGS.map((config, idx) => (
-          <LayoutButton
-            key={config.mode}
-            isSelected={modeIndex === idx}
-            onClick={() => setModeIndex(idx)}
-            isMiddle={idx > 0 && idx < LAYOUT_CONFIGS.length - 1}
-            label={config.label}
-            icon={config.icon}
-          />
-        ))}
+      <div className="flex justify-end w-full mb-6">
+        <div className="flex w-fit rounded-lg bg-slate-100/70 p-1 border border-slate-100">
+          {LAYOUT_CONFIGS.map((config, idx) => (
+            <LayoutButton
+              key={config.mode}
+              isSelected={modeIndex === idx}
+              onClick={() => setModeIndex(idx)}
+              isMiddle={idx > 0 && idx < LAYOUT_CONFIGS.length - 1}
+              label={config.label}
+              icon={config.icon}
+            />
+          ))}
+        </div>
       </div>
       <LayoutGroup>
         <motion.div

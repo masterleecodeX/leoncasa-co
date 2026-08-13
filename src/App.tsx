@@ -23,10 +23,24 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "./lib/firebase";
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const location = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (location.state?.scrollTo) {
+      const scroll = () => {
+        const el = document.getElementById(location.state.scrollTo);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+      // Attempt to scroll immediately, and then again after elements might have loaded/expanded
+      scroll();
+      setTimeout(scroll, 300);
+      setTimeout(scroll, 800);
+      setTimeout(scroll, 1500);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
   return null;
 }
 
