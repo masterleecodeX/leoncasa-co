@@ -117,14 +117,48 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
 
 function HomePage() {
   return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="flex w-full items-center justify-between p-4 relative z-50">
+        <NavigationMenuDemo />
+        <HeaderActions />
+      </header>
+      <main className="flex-1 relative z-10 bg-background overflow-x-hidden">
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 sm:h-12 md:h-16 bg-gradient-to-t from-background to-transparent z-20"></div>
+        <Hero10Demo />
+      </main>
+      <section className="w-full bg-background relative z-0">
+        <TextGradientScrollDemo />
+      </section>
+      <Footer />
+    </div>
+  );
+}
+
+function GetStartedPage() {
+  return (
     <div className="min-h-screen flex flex-col bg-white">
       <header className="flex w-full items-center justify-between p-4 relative z-50 text-slate-900">
-        <NavigationMenuDemo />
+        <NavigationMenuDemo showBackArrow={true} />
         <HeaderActions />
       </header>
       <main className="flex-1 flex flex-col relative z-10 bg-white -mt-[100px] pt-12 pb-24">
         <Hero04Demo />
         <LayoutToggleDemo />
+      </main>
+    </div>
+  );
+}
+
+function GalleryPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="flex w-full items-center justify-between p-4 relative z-50">
+        <NavigationMenuDemo showBackArrow={true} />
+        <HeaderActions />
+      </header>
+      <main className="flex-1 relative z-10 bg-background overflow-x-hidden">
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 sm:h-12 md:h-16 bg-gradient-to-t from-background to-transparent z-20"></div>
+        <Hero04Demo />
       </main>
       <Footer />
     </div>
@@ -137,6 +171,8 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+        <Route path="/get-started" element={<PageWrapper><GetStartedPage /></PageWrapper>} />
+        <Route path="/gallery" element={<PageWrapper><GalleryPage /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><AuthSectionTwo /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
       </Routes>
