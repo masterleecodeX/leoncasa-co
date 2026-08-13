@@ -1,5 +1,6 @@
 'use client'
 
+import { Link } from 'react-router-dom'
 import * as React from 'react'
 import { motion, useReducedMotion, type Variants } from 'motion/react'
 import Balancer from 'react-wrap-balancer'
@@ -234,7 +235,9 @@ export function Hero04({
         </Reveal>
 
         <Reveal active={animate} variants={mediaItem} className="w-full">
-          {mediaElement}
+          <Link to="/details" className="block cursor-pointer">
+            {mediaElement}
+          </Link>
         </Reveal>
       </motion.div>
     </section>

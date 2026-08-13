@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore"
 import { db } from "../../lib/firebase"
@@ -86,7 +87,7 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
         <CardFooter className="p-4 pt-0 mt-auto gap-3 max-sm:flex-col max-sm:items-stretch">
           <div className="flex flex-col">
             <span className="text-[10px] font-medium uppercase text-slate-400">Price</span>
-            <span className="text-base font-semibold text-slate-900">${product.price}</span>
+            <span className="text-base font-semibold text-slate-900">฿{product.price}</span>
           </div>
         </CardFooter>
       </Card>
@@ -95,22 +96,15 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
 }
 
 export default function LayoutToggleDemo() {
+  const navigate = useNavigate();
   const CACHE_KEY = "products_grid_cache";
   
   const [products, setProducts] = useState<any[]>(() => {
     try {
       const cached = localStorage.getItem(CACHE_KEY);
-      return cached ? JSON.parse(cached) : [];
+      return cached ? JSON.parse(cached) : DEFAULT_PRODUCTS;
     } catch (e) {
-      return [];
-    }
-  });
-  
-  const [loading, setLoading] = useState(() => {
-    try {
-      return localStorage.getItem(CACHE_KEY) ? false : true;
-    } catch (e) {
-      return true;
+      return DEFAULT_PRODUCTS;
     }
   });
 
@@ -122,25 +116,14 @@ export default function LayoutToggleDemo() {
         setProducts(data);
         localStorage.setItem(CACHE_KEY, JSON.stringify(data));
       } else {
-        setProducts([])
-        localStorage.setItem(CACHE_KEY, JSON.stringify([]));
+        setProducts(DEFAULT_PRODUCTS)
+        localStorage.setItem(CACHE_KEY, JSON.stringify(DEFAULT_PRODUCTS));
       }
-      setLoading(false)
     }, (err) => {
       console.error(err)
-      setLoading(false)
     })
     return () => unsubscribe()
   }, [])
-
-  if (loading) {
-    return (
-      <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 h-[400px] flex flex-col items-center justify-center gap-4 text-slate-900">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
-        <p className="text-sm text-slate-500 font-medium">Loading products...</p>
-      </div>
-    );
-  }
 
   return (
     <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">
@@ -148,6 +131,7 @@ export default function LayoutToggleDemo() {
         {products.map((product) => (
           <CellToggle
             key={product.id}
+            onClick={() => navigate('/details')}
             className="cursor-pointer overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm transition-shadow hover:shadow-md"
           >
             <GridProductCard product={product} />

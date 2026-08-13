@@ -13,17 +13,20 @@ export default function Hero04Demo() {
   const [slides, setSlides] = useState<any[]>(() => {
     try {
       const cached = localStorage.getItem(CACHE_KEY);
-      return cached ? JSON.parse(cached) : [];
+      return cached ? JSON.parse(cached) : [
+        {
+          badge: "LeonCasa & Co.",
+          title: "The grass farm its your art",
+          description: "",
+          price: "2024",
+          material: "Metal+Glass",
+          dimensions: "120x50",
+          imageSrc: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80",
+          imageAlt: "Interior",
+        }
+      ];
     } catch (e) {
       return [];
-    }
-  });
-
-  const [loading, setLoading] = useState(() => {
-    try {
-      return localStorage.getItem(CACHE_KEY) ? false : true;
-    } catch (e) {
-      return true;
     }
   });
 
@@ -38,30 +41,15 @@ export default function Hero04Demo() {
         setSlides([]);
         localStorage.setItem(CACHE_KEY, JSON.stringify([]));
       }
-      setLoading(false);
     }, (err) => {
       console.error(err);
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="w-full bg-white py-20 min-h-[600px] flex flex-col items-center justify-center gap-4">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
-        <p className="text-sm text-slate-500 font-medium">Loading gallery...</p>
-      </div>
-    );
-  }
-
   if (slides.length === 0) {
-    return (
-      <div className="w-full bg-white py-20 min-h-[600px] flex flex-col items-center justify-center gap-4">
-        <p className="text-sm text-slate-500 font-medium">No slides found. Add them in the admin menu.</p>
-      </div>
-    );
+    return null;
   }
 
   // Ensure index is within bounds
@@ -82,14 +70,14 @@ export default function Hero04Demo() {
     primaryCTA: {
       ctaEnabled: true,
       text: t('Start your gallery'),
-      link: '#',
+      link: '/details',
       variant: 'default',
       size: 'default',
     },
     secondaryCTA: {
       ctaEnabled: true,
       text: t('See examples'),
-      link: '#',
+      link: '/details',
       variant: 'link',
     }
   } as Hero04Props;

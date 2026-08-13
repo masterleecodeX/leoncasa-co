@@ -22,6 +22,8 @@ import "./index.css";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "./lib/firebase";
 
+import HeroFashion from "./components/blocks/hero-fashion";
+
 function ScrollToTop() {
   const location = useLocation();
   useEffect(() => {
@@ -44,6 +46,34 @@ function ScrollToTop() {
   return null;
 }
 
+function ImageProtector() {
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      // Prevent right-click context menu on images
+      if (e.target instanceof HTMLImageElement) {
+        e.preventDefault();
+      }
+    };
+    
+    // Global dragstart prevention as a fallback
+    const handleDragStart = (e: DragEvent) => {
+      if (e.target instanceof HTMLImageElement) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('dragstart', handleDragStart);
+    
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('dragstart', handleDragStart);
+    };
+  }, []);
+  
+  return null;
+}
+
 function GlobalDataPrefetcher() {
   useEffect(() => {
     // Eagerly fetch and cache data on app load to eliminate latency
@@ -61,9 +91,17 @@ function GlobalDataPrefetcher() {
       }
     });
 
+    const unsubscribeHeroGallery = onSnapshot(collection(db, "hero_gallery"), (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
+        localStorage.setItem("hero_gallery_cache", JSON.stringify(data));
+      }
+    });
+
     return () => {
       unsubscribeCoverflow();
       unsubscribeProducts();
+      unsubscribeHeroGallery();
     };
   }, []);
   
@@ -179,6 +217,21 @@ function GalleryPage() {
   );
 }
 
+function ProductDetailsPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      <header className="flex w-full items-center justify-between p-4 relative z-50 text-slate-900">
+        <NavigationMenuDemo showBackArrow={true} />
+        <HeaderActions />
+      </header>
+      <main className="flex-1 flex flex-col relative z-10 bg-white">
+        <HeroFashion />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -187,6 +240,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
         <Route path="/get-started" element={<PageWrapper><GetStartedPage /></PageWrapper>} />
         <Route path="/gallery" element={<PageWrapper><GalleryPage /></PageWrapper>} />
+        <Route path="/details" element={<PageWrapper><ProductDetailsPage /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><AuthSectionTwo /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
       </Routes>
@@ -198,6 +252,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <Router>
+        <ImageProtector />
         <ScrollToTop />
         <GlobalDataPrefetcher />
         <AnimatedRoutes />

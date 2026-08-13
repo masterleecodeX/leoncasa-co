@@ -100,7 +100,7 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[13px] font-medium text-gray-500 ml-1">Price ($)</label>
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Price (฿)</label>
             <input 
               type="number"
               value={localProduct.price || 0} 
