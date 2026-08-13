@@ -76,11 +76,22 @@ function ImageProtector() {
 
 function GlobalDataPrefetcher() {
   useEffect(() => {
+    // Helper to eagerly download images into browser cache
+    const preloadImages = (urls: (string | undefined)[]) => {
+      urls.forEach(url => {
+        if (url) {
+          const img = new Image();
+          img.src = url;
+        }
+      });
+    };
+
     // Eagerly fetch and cache data on app load to eliminate latency
     const unsubscribeCoverflow = onSnapshot(collection(db, "coverflow"), (snapshot) => {
       if (!snapshot.empty) {
         const data = snapshot.docs.map(doc => doc.data() as any);
         localStorage.setItem("coverflow_slides_cache", JSON.stringify(data));
+        preloadImages(data.map((item: any) => item.imageSrc));
       }
     });
 
@@ -88,6 +99,7 @@ function GlobalDataPrefetcher() {
       if (!snapshot.empty) {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
         localStorage.setItem("products_grid_cache", JSON.stringify(data));
+        preloadImages(data.map((item: any) => item.imageUrl));
       }
     });
 
@@ -95,6 +107,7 @@ function GlobalDataPrefetcher() {
       if (!snapshot.empty) {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
         localStorage.setItem("hero_gallery_cache", JSON.stringify(data));
+        preloadImages(data.map((item: any) => item.imageSrc));
       }
     });
 
