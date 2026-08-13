@@ -4,11 +4,9 @@ import { db } from '../../lib/firebase'
 import { Hero04, type Hero04Props } from '@/components/ui/hero-04'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'motion/react'
-import { useCurrency } from '@/hooks/useCurrency'
 
 export default function Hero04Demo() {
   const { t } = useTranslation();
-  const { formatPrice } = useCurrency();
   const [currentIndex, setCurrentIndex] = useState(0);
   const CACHE_KEY = "hero_gallery_cache";
   
@@ -69,12 +67,6 @@ export default function Hero04Demo() {
   // Ensure index is within bounds
   const activeIndex = currentIndex >= slides.length ? 0 : currentIndex;
   const currentSlide = slides[activeIndex];
-  const formattedMeta = (currentSlide.meta || []).map((m: any) => {
-    if (m.label === "Price" && !isNaN(Number(m.value))) {
-      return { ...m, value: formatPrice(Number(m.value)) };
-    }
-    return m;
-  });
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
@@ -86,7 +78,6 @@ export default function Hero04Demo() {
 
   const slideProps = {
     ...currentSlide,
-    meta: formattedMeta,
     animation: 'subtle',
     primaryCTA: {
       ctaEnabled: true,

@@ -312,7 +312,7 @@ export function CoverflowCarousel({
                 aria-label={`${index + 1} of ${count}`}
                 data-slide-index={index}
                 className={cn(
-                  "absolute left-1/2 top-0 aspect-[3/4] overflow-hidden rounded-2xl bg-muted shadow-xl will-change-transform cursor-pointer",
+                  "absolute left-1/2 top-0 aspect-square overflow-hidden rounded-2xl bg-muted shadow-xl will-change-transform cursor-pointer",
                   cardClassName,
                 )}
                 style={{ width: "var(--cf-card)" }}

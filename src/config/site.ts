@@ -14,7 +14,7 @@ export const siteConfig = {
     imageAlts: ['Design detail', 'Product interface', 'Layout composition'],
     primaryCTA: {
       text: 'Get Started',
-      link: '/get-started',
+      link: '#',
     },
     secondaryCTA: {
       text: 'How it works',

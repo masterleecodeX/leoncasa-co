@@ -5,22 +5,68 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { ContainerToggle, CellToggle } from "../blocks/animated-toggle-layout-container"
-import { useCurrency } from "@/hooks/useCurrency"
-import { useTranslation } from "react-i18next";
 
-type Product = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  price: number;
-};
+const DEFAULT_PRODUCTS = [
+  {
+    id: "item-9",
+    name: "adidas",
+    imageUrl: "https://m.media-amazon.com/images/I/61uSf-0MJzL._AC_SY695_.jpg",
+    price: 120,
+  },
+  {
+    id: "item-8",
+    name: "nike",
+    imageUrl: "https://m.media-amazon.com/images/I/81YBp7gNeHL._AC_SX695_.jpg",
+    price: 120,
+  },
+  {
+    id: "item-4",
+    name: "brooks",
+    imageUrl: "https://m.media-amazon.com/images/I/81s8buboliL._AC_SY695_.jpg",
+    price: 95,
+  },
+  {
+    id: "item-2",
+    name: "nike",
+    imageUrl: "https://m.media-amazon.com/images/I/81hPhqRGDIL._AC_SX695_.jpg",
+    price: 79.95,
+  },
+  {
+    id: "item-5",
+    name: "salomon",
+    imageUrl: "https://m.media-amazon.com/images/I/71NRA5y7qIL._AC_SX695_.jpg",
+    price: 89.99,
+  },
+  {
+    id: "item-7",
+    name: "brooks",
+    imageUrl: "https://m.media-amazon.com/images/I/81gwJjH+E9L._AC_SY695_.jpg",
+    price: 88,
+  },
+  {
+    id: "item-1",
+    name: "nike",
+    imageUrl: "https://m.media-amazon.com/images/I/81IaVB-vw7L._AC_SX695_.jpg",
+    price: 199.99,
+  },
+  {
+    id: "item-6",
+    name: "new balance",
+    imageUrl: "https://m.media-amazon.com/images/I/61LGqMZ5UXL._AC_SY695_.jpg",
+    price: 70,
+  },
+  {
+    id: "item-3",
+    name: "under armour",
+    imageUrl: "https://m.media-amazon.com/images/I/61P3L82SruL._AC_SY695_.jpg",
+    price: 85.99,
+  },
+]
 
-function GridProductCard({ product }: { product: Product }) {
-  const { formatPrice } = useCurrency();
-  const { t } = useTranslation();
+function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
   return (
     <div className="relative w-full h-full flex flex-col group">
-      <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] overflow-hidden bg-neutral-100">
+      <div className="relative w-full aspect-square sm:aspect-[6/7] overflow-hidden bg-neutral-100">
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -35,12 +81,12 @@ function GridProductCard({ product }: { product: Product }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-0 pb-4 text-xs text-slate-500 line-clamp-2">
-          {t("High performance running shoes designed for ultimate comfort and speed. Experience the perfect blend of style and engineering.")}
+          High performance running shoes designed for ultimate comfort and speed. Experience the perfect blend of style and engineering.
         </CardContent>
         <CardFooter className="p-4 pt-0 mt-auto gap-3 max-sm:flex-col max-sm:items-stretch">
           <div className="flex flex-col">
-            <span className="text-[10px] font-medium uppercase text-slate-400">{t("Price")}</span>
-            <span className="text-base font-semibold text-slate-900">{formatPrice(product.price)}</span>
+            <span className="text-[10px] font-medium uppercase text-slate-400">Price</span>
+            <span className="text-base font-semibold text-slate-900">${product.price}</span>
           </div>
         </CardFooter>
       </Card>
@@ -49,7 +95,6 @@ function GridProductCard({ product }: { product: Product }) {
 }
 
 export default function LayoutToggleDemo() {
-  const { t } = useTranslation();
   const CACHE_KEY = "products_grid_cache";
   
   const [products, setProducts] = useState<any[]>(() => {
@@ -92,7 +137,7 @@ export default function LayoutToggleDemo() {
     return (
       <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 h-[400px] flex flex-col items-center justify-center gap-4 text-slate-900">
         <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
-        <p className="text-sm text-slate-500 font-medium">{t("Loading products...")}</p>
+        <p className="text-sm text-slate-500 font-medium">Loading products...</p>
       </div>
     );
   }
