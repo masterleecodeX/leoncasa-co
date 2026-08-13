@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { ContainerToggle, CellToggle } from "../blocks/animated-toggle-layout-container"
+import { Skeleton } from '@/components/ui/skeleton'
 
 const DEFAULT_PRODUCTS = [
   {
@@ -108,6 +109,14 @@ export default function LayoutToggleDemo() {
     }
   });
 
+  const [loading, setLoading] = useState(() => {
+    try {
+      return localStorage.getItem(CACHE_KEY) ? false : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
   useEffect(() => {
     const q = collection(db, "products")
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -119,11 +128,38 @@ export default function LayoutToggleDemo() {
         setProducts(DEFAULT_PRODUCTS)
         localStorage.setItem(CACHE_KEY, JSON.stringify(DEFAULT_PRODUCTS));
       }
+      setLoading(false);
     }, (err) => {
       console.error(err)
+      setLoading(false);
     })
     return () => unsubscribe()
   }, [])
+
+  if (loading) {
+    return (
+      <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="flex flex-col overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
+              <Skeleton className="w-full aspect-square sm:aspect-[6/7] rounded-none" />
+              <div className="p-4 flex flex-col gap-4">
+                <Skeleton className="h-6 w-3/4 rounded-md" />
+                <div className="space-y-3">
+                  <Skeleton className="h-3 w-full rounded-md" />
+                  <Skeleton className="h-3 w-5/6 rounded-md" />
+                </div>
+                <div className="mt-4 flex flex-col gap-2">
+                  <Skeleton className="h-3 w-12 rounded-md" />
+                  <Skeleton className="h-6 w-20 rounded-md" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">

@@ -4,6 +4,7 @@ import { db } from '../../lib/firebase'
 import { Hero04, type Hero04Props } from '@/components/ui/hero-04'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'motion/react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Hero04Demo() {
   const { t } = useTranslation();
@@ -30,6 +31,14 @@ export default function Hero04Demo() {
     }
   });
 
+  const [loading, setLoading] = useState(() => {
+    try {
+      return localStorage.getItem(CACHE_KEY) ? false : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
   useEffect(() => {
     const q = collection(db, "hero_gallery");
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -41,12 +50,42 @@ export default function Hero04Demo() {
         setSlides([]);
         localStorage.setItem(CACHE_KEY, JSON.stringify([]));
       }
+      setLoading(false);
     }, (err) => {
       console.error(err);
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full bg-white flex flex-col items-center justify-center p-8 lg:p-16 min-h-[600px]">
+        <div className="w-full max-w-[1400px] flex flex-col lg:flex-row gap-12 lg:gap-8 items-center">
+          <div className="flex-1 w-full space-y-6">
+            <Skeleton className="h-6 w-32 rounded-full" />
+            <Skeleton className="h-[100px] md:h-[160px] w-full max-w-2xl rounded-2xl" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-4 pt-10">
+              <Skeleton className="h-12 w-40 rounded-full" />
+              <Skeleton className="h-12 w-32 rounded-full" />
+            </div>
+          </div>
+          <div className="flex-1 w-full max-w-[600px] lg:max-w-none ml-auto">
+            <Skeleton className="w-full aspect-[4/5] rounded-[2.5rem]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (slides.length === 0) {
     return null;
