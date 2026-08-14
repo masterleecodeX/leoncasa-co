@@ -10,22 +10,29 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu-1';
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { siteConfig } from '@/config/site';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const components = siteConfig.navigation;
+const MENU_IMAGE_URL = "https://img.sanishtech.com/u/6ca18bc285dabc5a3712d8ff6b63c052.png";
 
 export default function NavigationMenuDemo({ showBackArrow = false }: { showBackArrow?: boolean }) {
   const [value, setValue] = React.useState<any>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  React.useEffect(() => {
+    // Preload the image so it appears instantly when the dropdown opens
+    const img = new Image();
+    img.src = MENU_IMAGE_URL;
+  }, []);
+
   const handleIntroductionClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (location.pathname !== '/get-started') {
-      navigate('/get-started');
+    if (location.pathname !== '/') {
+      navigate('/');
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -35,12 +42,20 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
   const handleInstallationClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (location.pathname !== '/get-started') {
+      navigate('/get-started');
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setValue(null); // Close the menu
+  };
+
+  const handleTypographyClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname !== '/get-started') {
       navigate('/get-started', { state: { scrollTo: 'installation-section' } });
     } else {
       const el = document.getElementById('installation-section');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
     setValue(null); // Close the menu
   };
@@ -60,28 +75,32 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
       <NavigationMenuList className="flex-nowrap justify-start">
         {showBackArrow && (
           <NavigationMenuItem>
-            <Link to="/" className={cn(navigationMenuTriggerStyle(), "px-2 mr-1")}>
+            <button onClick={() => navigate(-1)} className={cn(navigationMenuTriggerStyle(), "px-2 mr-1 cursor-pointer bg-transparent border-0")}>
               <ChevronLeft className="h-4 w-4" />
-            </Link>
+            </button>
           </NavigationMenuItem>
         )}
         <NavigationMenuItem>
           <NavigationMenuTrigger>Home</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+            <ul className="grid gap-2 w-[calc(100vw-3rem)] sm:w-[400px] md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink
                   render={
                     <a
-                      className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
+                      className="relative flex h-full w-full flex-col justify-end rounded-md p-6 no-underline outline-hidden select-none focus:shadow-md overflow-hidden"
                       href="#"
                     />
                   }
                 >
-                  <div className="mt-4 mb-2 text-lg font-medium">ReUI</div>
-                  <p className="text-muted-foreground text-sm leading-tight">
-                    Beautifully designed components built with Tailwind CSS.
-                  </p>
+                  <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url("${MENU_IMAGE_URL}")` }}></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-0"></div>
+                  <div className="relative z-10">
+                    <div className="mt-4 mb-2 text-lg font-medium text-white">ReUI</div>
+                    <p className="text-white/80 text-sm leading-tight">
+                      Beautifully designed components built with Tailwind CSS.
+                    </p>
+                  </div>
                 </NavigationMenuLink>
               </li>
               <ListItem href="#" title="Introduction" onClick={handleIntroductionClick}>
@@ -90,7 +109,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
               <ListItem href="#" title="Installation" onClick={handleInstallationClick}>
                 How to install dependencies and structure your app.
               </ListItem>
-              <ListItem href="#" title="Typography">
+              <ListItem href="#" title="Typography" onClick={handleTypographyClick}>
                 Styles for headings, paragraphs, lists...etc
               </ListItem>
             </ul>
@@ -99,7 +118,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
         <NavigationMenuItem>
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+            <ul className="grid w-[calc(100vw-3rem)] sm:w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {components.map((component) => (
                 <ListItem key={component.title} title={component.title} href={component.href}>
                   {component.description}
@@ -116,7 +135,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
         <NavigationMenuItem>
           <NavigationMenuTrigger>List</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[300px] gap-4">
+            <ul className="grid w-[calc(100vw-3rem)] sm:w-[300px] gap-4">
               <li>
                 <NavigationMenuLink render={<a href="#" />}>
                   <div className="font-medium">Components</div>
@@ -134,39 +153,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Simple</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-4">
-              <li>
-                <NavigationMenuLink render={<a href="#" />}>Components</NavigationMenuLink>
-                <NavigationMenuLink render={<a href="#" />}>Documentation</NavigationMenuLink>
-                <NavigationMenuLink render={<a href="#" />}>Blocks</NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>With Icon</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-4">
-              <li>
-                <NavigationMenuLink render={<a href="#" className="flex flex-row items-center gap-2" />}>
-                  <CircleHelpIcon />
-                  Backlog
-                </NavigationMenuLink>
-                <NavigationMenuLink render={<a href="#" className="flex flex-row items-center gap-2" />}>
-                  <CircleIcon />
-                  To Do
-                </NavigationMenuLink>
-                <NavigationMenuLink render={<a href="#" className="flex flex-row items-center gap-2" />}>
-                  <CircleCheckIcon />
-                  Done
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
+
       </NavigationMenuList>
 
       <NavigationMenuPositioner>

@@ -108,16 +108,13 @@ export default function Hero04Demo() {
     animation: 'subtle',
     primaryCTA: {
       ctaEnabled: true,
-      text: t('Start your gallery'),
-      link: '/details',
+      text: t('See more'),
+      link: '#installation-section',
       variant: 'default',
       size: 'default',
     },
     secondaryCTA: {
-      ctaEnabled: true,
-      text: t('See examples'),
-      link: '/details',
-      variant: 'link',
+      ctaEnabled: false,
     }
   } as Hero04Props;
 

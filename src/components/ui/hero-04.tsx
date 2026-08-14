@@ -191,7 +191,7 @@ export function Hero04({
   )
 
   const ctasElement = (primaryCTA?.ctaEnabled || secondaryCTA?.ctaEnabled) && (
-    <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-3 w-full lg:w-auto">
+    <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-center lg:ml-[64px] lg:w-[260px] gap-x-4 gap-y-3 w-full">
       {primaryCTA?.ctaEnabled && <Cta cta={primaryCTA} />}
       {secondaryCTA?.ctaEnabled && (
         <Cta

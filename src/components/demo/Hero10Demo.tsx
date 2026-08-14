@@ -22,11 +22,8 @@ export default function Hero10Demo() {
       size: 'default',
     },
     secondaryCTA: {
-      ctaEnabled: true,
-      text: t(siteConfig.hero.secondaryCTA.text),
-      link: siteConfig.hero.secondaryCTA.link,
-      variant: 'outline',
-      size: 'default',
+      ctaEnabled: false,
+      text: "",
     },
   } satisfies Hero10Props
 

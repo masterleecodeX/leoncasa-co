@@ -41,7 +41,7 @@ interface LayoutButtonProps {
 const LayoutButton = ({
   isSelected,
   onClick,
-  isMiddle,
+  
   label,
   icon: Icon
 }: LayoutButtonProps) => (

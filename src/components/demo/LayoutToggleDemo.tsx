@@ -66,6 +66,7 @@ const DEFAULT_PRODUCTS = [
 ]
 
 function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
+  const navigate = useNavigate();
   return (
     <div className="relative w-full h-full flex flex-col group">
       <div className="relative w-full aspect-square sm:aspect-[6/7] overflow-hidden bg-neutral-100">
@@ -82,8 +83,16 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
             {product.name}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 pt-0 pb-4 text-xs text-slate-500 line-clamp-2">
-          High performance running shoes designed for ultimate comfort and speed. Experience the perfect blend of style and engineering.
+        <CardContent className="p-4 pt-0 pb-4 text-xs text-slate-500">
+          <p className="line-clamp-2">
+            {(product as any).description || "High performance running shoes designed for ultimate comfort and speed. Experience the perfect blend of style and engineering."}
+          </p>
+          <span 
+            onClick={() => navigate('/details')}
+            className="inline-block mt-1 font-medium underline cursor-pointer text-slate-900 hover:text-black transition-colors"
+          >
+            See more
+          </span>
         </CardContent>
         <CardFooter className="p-4 pt-0 mt-auto gap-3 max-sm:flex-col max-sm:items-stretch">
           <div className="flex flex-col">

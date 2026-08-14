@@ -1,17 +1,22 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  useNavigationType,
+} from "react-router-dom";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Hero10Demo from "./components/demo/Hero10Demo";
 import NavigationMenuDemo from "./components/demo/NavigationMenuDemo";
 import TextGradientScrollDemo from "./components/demo/TextGradientScrollDemo";
 import Hero04Demo from "./components/demo/Hero04Demo";
 import LayoutToggleDemo from "./components/demo/LayoutToggleDemo";
-import CoverflowDemo from "./components/demo/CoverflowDemo";
 import { Footer } from "./components/ui/footer-section";
-import { Button } from "./components/ui/button";
 import AuthSectionTwo from "./components/ui/auth-section-2";
 import FloatingActionMenu from "./components/ui/floating-action-menu";
-import { Settings, User as UserIcon, LogOut } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 import { signOut, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
@@ -24,23 +29,42 @@ import { db } from "./lib/firebase";
 
 import HeroFashion from "./components/blocks/hero-fashion";
 
+const scrollPositions: Record<string, number> = {};
+
+function ScrollManager() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      scrollPositions[location.key] = window.scrollY;
+    };
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [location.key]);
+
+  return null;
+}
+
 function ScrollToTop() {
   const location = useLocation();
   useEffect(() => {
+    // Disable automatic top scrolling here because it causes the current exiting page to jump up immediately.
+    // Instead we handle scrolling in the PageWrapper so it waits for the new page to mount.
     if (location.state?.scrollTo) {
       const scroll = () => {
         const el = document.getElementById(location.state.scrollTo);
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
+          el.scrollIntoView({ behavior: "smooth" });
         }
       };
-      // Attempt to scroll immediately, and then again after elements might have loaded/expanded
       scroll();
       setTimeout(scroll, 300);
       setTimeout(scroll, 800);
       setTimeout(scroll, 1500);
-    } else {
-      window.scrollTo(0, 0);
     }
   }, [location]);
   return null;
@@ -54,7 +78,7 @@ function ImageProtector() {
         e.preventDefault();
       }
     };
-    
+
     // Global dragstart prevention as a fallback
     const handleDragStart = (e: DragEvent) => {
       if (e.target instanceof HTMLImageElement) {
@@ -62,15 +86,15 @@ function ImageProtector() {
       }
     };
 
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('dragstart', handleDragStart);
-    
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("dragstart", handleDragStart);
+
     return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('dragstart', handleDragStart);
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("dragstart", handleDragStart);
     };
   }, []);
-  
+
   return null;
 }
 
@@ -78,7 +102,7 @@ function GlobalDataPrefetcher() {
   useEffect(() => {
     // Helper to eagerly download images into browser cache
     const preloadImages = (urls: (string | undefined)[]) => {
-      urls.forEach(url => {
+      urls.forEach((url) => {
         if (url) {
           const img = new Image();
           img.src = url;
@@ -87,29 +111,42 @@ function GlobalDataPrefetcher() {
     };
 
     // Eagerly fetch and cache data on app load to eliminate latency
-    const unsubscribeCoverflow = onSnapshot(collection(db, "coverflow"), (snapshot) => {
-      if (!snapshot.empty) {
-        const data = snapshot.docs.map(doc => doc.data() as any);
-        localStorage.setItem("coverflow_slides_cache", JSON.stringify(data));
-        preloadImages(data.map((item: any) => item.imageSrc));
-      }
-    });
+    const unsubscribeCoverflow = onSnapshot(
+      collection(db, "coverflow"),
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const data = snapshot.docs.map((doc) => doc.data() as any);
+          localStorage.setItem("coverflow_slides_cache", JSON.stringify(data));
+          preloadImages(data.map((item: any) => item.imageSrc));
+        }
+      },
+    );
 
-    const unsubscribeProducts = onSnapshot(collection(db, "products"), (snapshot) => {
-      if (!snapshot.empty) {
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
-        localStorage.setItem("products_grid_cache", JSON.stringify(data));
-        preloadImages(data.map((item: any) => item.imageUrl));
-      }
-    });
+    const unsubscribeProducts = onSnapshot(
+      collection(db, "products"),
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const data = snapshot.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() }) as any,
+          );
+          localStorage.setItem("products_grid_cache", JSON.stringify(data));
+          preloadImages(data.map((item: any) => item.imageUrl));
+        }
+      },
+    );
 
-    const unsubscribeHeroGallery = onSnapshot(collection(db, "hero_gallery"), (snapshot) => {
-      if (!snapshot.empty) {
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as any);
-        localStorage.setItem("hero_gallery_cache", JSON.stringify(data));
-        preloadImages(data.map((item: any) => item.imageSrc));
-      }
-    });
+    const unsubscribeHeroGallery = onSnapshot(
+      collection(db, "hero_gallery"),
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const data = snapshot.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() }) as any,
+          );
+          localStorage.setItem("hero_gallery_cache", JSON.stringify(data));
+          preloadImages(data.map((item: any) => item.imageSrc));
+        }
+      },
+    );
 
     return () => {
       unsubscribeCoverflow();
@@ -117,19 +154,22 @@ function GlobalDataPrefetcher() {
       unsubscribeHeroGallery();
     };
   }, []);
-  
+
   return null;
 }
 
 function HeaderActions() {
   const { user, loading, isAdmin } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
-  
+
   if (loading) return null;
 
   if (user) {
-    const menuOptions: Array<{label: string; Icon: React.ReactNode; onClick: () => void}> = [];
+    const menuOptions: Array<{
+      label: string;
+      Icon: React.ReactNode;
+      onClick: () => void;
+    }> = [];
 
     if (isAdmin) {
       menuOptions.push({
@@ -147,16 +187,13 @@ function HeaderActions() {
 
     return (
       <div className="ml-auto flex items-center justify-end mr-4">
-        <FloatingActionMenu
-          user={user}
-          options={menuOptions}
-        />
+        <FloatingActionMenu user={user} options={menuOptions} />
       </div>
     );
   }
 
   return (
-    <button 
+    <button
       onClick={() => signInWithPopup(auth, googleProvider)}
       className="fixed bottom-1 right-1 p-3 text-[10px] leading-none text-slate-400 opacity-20 hover:opacity-100 transition-opacity z-50 focus:outline-none"
       title="."
@@ -167,13 +204,33 @@ function HeaderActions() {
 }
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
+  const navType = useNavigationType();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Disable browser automatic scroll restoration to prevent fighting
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    if (navType === "POP") {
+      const savedPosition = scrollPositions[location.key];
+      if (savedPosition !== undefined) {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, savedPosition);
+          setTimeout(() => window.scrollTo(0, savedPosition), 100);
+        });
+      }
+    }
+  }, [navType, location]);
+
   return (
     <motion.div
-      initial={{ opacity: 0, filter: "blur(4px)" }}
-      animate={{ opacity: 1, filter: "blur(0px)" }}
-      exit={{ opacity: 0, filter: "blur(4px)" }}
-      transition={{ duration: 0.15, ease: "easeOut" }}
-      className="min-h-screen bg-background"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="flex flex-col w-full min-h-screen"
     >
       {children}
     </motion.div>
@@ -247,15 +304,67 @@ function ProductDetailsPage() {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const navType = useNavigationType();
+  
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence 
+      mode="wait"
+      onExitComplete={() => {
+        // Force the browser to jump to the top of the window exactly as the outgoing page is removed
+        if (navType !== "POP" && !location.state?.scrollTo) {
+          window.scrollTo(0, 0);
+        }
+      }}
+    >
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
-        <Route path="/get-started" element={<PageWrapper><GetStartedPage /></PageWrapper>} />
-        <Route path="/gallery" element={<PageWrapper><GalleryPage /></PageWrapper>} />
-        <Route path="/details" element={<PageWrapper><ProductDetailsPage /></PageWrapper>} />
-        <Route path="/login" element={<PageWrapper><AuthSectionTwo /></PageWrapper>} />
-        <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
+        <Route
+          path="/"
+          element={
+            <PageWrapper>
+              <HomePage />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/get-started"
+          element={
+            <PageWrapper>
+              <GetStartedPage />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/gallery"
+          element={
+            <PageWrapper>
+              <GalleryPage />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/details"
+          element={
+            <PageWrapper>
+              <ProductDetailsPage />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PageWrapper>
+              <AuthSectionTwo />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PageWrapper>
+              <AdminPage />
+            </PageWrapper>
+          }
+        />
       </Routes>
     </AnimatePresence>
   );
@@ -266,6 +375,7 @@ export default function App() {
     <ErrorBoundary>
       <Router>
         <ImageProtector />
+        <ScrollManager />
         <ScrollToTop />
         <GlobalDataPrefetcher />
         <AnimatedRoutes />

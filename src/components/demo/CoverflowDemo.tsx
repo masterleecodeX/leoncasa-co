@@ -148,9 +148,9 @@ export default function CoverflowDemo() {
   const [slides, setSlides] = useState<any[]>(() => {
     try {
       const cached = localStorage.getItem(CACHE_KEY);
-      return cached ? JSON.parse(cached) : [];
+      return cached ? JSON.parse(cached) : DEFAULT_SLIDES;
     } catch (e) {
-      return [];
+      return DEFAULT_SLIDES;
     }
   });
   
