@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Furniture, Sourced Worldwide</title>
+    <title>LeonCasa & Co.</title>
     
     <!-- ========================================== -->
     <!-- EDIT YOUR WEBSITE SEO & SOCIAL SHARING HERE -->
@@ -46,6 +46,22 @@
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       }
     </style>
+      <script>
+      // Attempt to disable right-click and inspection shortcuts
+      document.addEventListener('contextmenu', event => event.preventDefault());
+      document.onkeydown = function (e) {
+        if (
+          e.key === 'F12' || 
+          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+          (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'j' || e.key === 'c')) || // Mac equivalents
+          (e.ctrlKey && e.key === 'U') ||
+          (e.metaKey && e.key === 'u') // Mac view source
+        ) {
+          e.preventDefault();
+          return false;
+        }
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>
