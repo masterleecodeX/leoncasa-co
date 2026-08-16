@@ -222,6 +222,14 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
           setTimeout(() => window.scrollTo(0, savedPosition), 100);
         });
       }
+    } else if (!location.state?.scrollTo) {
+      window.scrollTo(0, 0);
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        setTimeout(() => window.scrollTo(0, 0), 10);
+        setTimeout(() => window.scrollTo(0, 0), 50);
+        setTimeout(() => window.scrollTo(0, 0), 100);
+      });
     }
   }, [navType, location]);
 

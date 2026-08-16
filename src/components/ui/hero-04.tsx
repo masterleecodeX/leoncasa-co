@@ -227,14 +227,14 @@ export function Hero04({
       >
         <Reveal
           active={animate}
-          className={cn('flex flex-col items-center lg:items-start w-full', vs.header)}
+          className={cn('flex flex-col items-center lg:items-start w-full order-2 lg:order-1', vs.header)}
         >
           {titleElement}
           {descriptionElement}
           {ctasElement}
         </Reveal>
 
-        <Reveal active={animate} variants={mediaItem} className="w-full">
+        <Reveal active={animate} variants={mediaItem} className="w-full order-1 lg:order-2">
           <Link to="/details" className="block cursor-pointer">
             {mediaElement}
           </Link>
