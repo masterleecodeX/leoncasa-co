@@ -1,6 +1,6 @@
 import { useAuth } from "../hooks/useAuth";
 import React, { useState, useEffect } from "react";
-import { collection, onSnapshot, doc, setDoc, deleteDoc, addDoc } from "firebase/firestore";
+import { collection, onSnapshot, doc, setDoc, deleteDoc, addDoc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { Button } from "../components/ui/button";
 import { Trash, Plus, Save, ArrowLeft } from "lucide-react";
@@ -126,6 +126,17 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
           <Trash className="w-4 h-4" />
         </button>
       </div>
+      {activeTab === "viewers" && (
+        <div className="space-y-6 max-w-2xl">
+          <div className="flex justify-between items-end mb-2">
+            <h2 className="text-xl font-medium tracking-tight text-gray-900">Website Analytics</h2>
+          </div>
+          <div className="p-8 border border-gray-200/75 rounded-[20px] bg-white shadow-sm flex flex-col items-center justify-center">
+            <h3 className="text-lg font-medium text-gray-500 mb-2">Total Unique Visitors</h3>
+            <p className="text-5xl font-bold text-slate-900">{viewerCount}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -254,7 +265,8 @@ export default function AdminPage() {
   const [heroSlides, setHeroSlides] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [admins, setAdmins] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"hero_gallery" | "products" | "admins">("hero_gallery");
+  const [activeTab, setActiveTab] = useState<"hero_gallery" | "products" | "admins" | "viewers">("hero_gallery");
+  const [viewerCount, setViewerCount] = useState<number>(0);
   const [newAdminEmail, setNewAdminEmail] = useState("");
 
   useEffect(() => {
@@ -264,6 +276,16 @@ export default function AdminPage() {
     const unsubProducts = onSnapshot(collection(db, "products"), (snapshot) => {
       setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
+    const fetchViewers = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, "analytics", "visitors"));
+        if (docSnap.exists()) {
+          setViewerCount(docSnap.data().count || 0);
+        }
+      } catch(e) {}
+    };
+    fetchViewers();
+    
     const unsubAdmins = onSnapshot(collection(db, "admins"), (snapshot) => {
       setAdmins(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
@@ -394,6 +416,12 @@ export default function AdminPage() {
             onClick={() => setActiveTab("admins")}
           >
             Admins
+          </button>
+          <button 
+            className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'viewers' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
+            onClick={() => setActiveTab("viewers")}
+          >
+            Viewers
           </button>
         </div>
       </div>

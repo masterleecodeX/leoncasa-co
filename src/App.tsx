@@ -27,6 +27,7 @@ import "./index.css";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "./lib/firebase";
 
+import { VisitorTracker } from "./components/VisitorTracker";
 import HeroFashion from "./components/blocks/hero-fashion";
 
 const scrollPositions: Record<string, number> = {};
@@ -375,6 +376,7 @@ export default function App() {
     <ErrorBoundary>
       <Router>
         <ImageProtector />
+        <VisitorTracker />
         <ScrollManager />
         <ScrollToTop />
         <GlobalDataPrefetcher />

@@ -16,7 +16,7 @@ import { siteConfig } from '@/config/site';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const components = siteConfig.navigation;
-const MENU_IMAGE_URL = "https://img.sanishtech.com/u/6ca18bc285dabc5a3712d8ff6b63c052.png";
+const MENU_IMAGE_URL = "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=640&h=640&fit=crop&q=70&auto=format";
 
 export default function NavigationMenuDemo({ showBackArrow = false }: { showBackArrow?: boolean }) {
   const [value, setValue] = React.useState<any>(null);
@@ -96,7 +96,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url("${MENU_IMAGE_URL}")` }}></div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-0"></div>
                   <div className="relative z-10">
-                    <div className="mt-4 mb-2 text-lg font-medium text-white">ReUI</div>
+                    <div className="mt-4 mb-2 text-lg font-medium text-white">LeonCasa & Co.</div>
                     <p className="text-white/80 text-sm leading-tight">
                       Beautifully designed components built with Tailwind CSS.
                     </p>
