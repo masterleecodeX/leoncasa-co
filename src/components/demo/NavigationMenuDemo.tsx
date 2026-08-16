@@ -98,19 +98,19 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   <div className="relative z-10">
                     <div className="mt-4 mb-2 text-lg font-medium text-white">LeonCasa & Co.</div>
                     <p className="text-white/80 text-sm leading-tight">
-                      Beautifully designed components built with Tailwind CSS.
+                      Discover premium, handcrafted furniture designed to elevate your living spaces.
                     </p>
                   </div>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="#" title="Introduction" onClick={handleIntroductionClick}>
-                Re-usable components built using Radix UI and Tailwind CSS.
+              <ListItem href="#" title="Our Story" onClick={handleIntroductionClick}>
+                Learn about our heritage and passion for crafting timeless furniture.
               </ListItem>
-              <ListItem href="#" title="Installation" onClick={handleInstallationClick}>
-                How to install dependencies and structure your app.
+              <ListItem href="#" title="Collections" onClick={handleInstallationClick}>
+                Explore our curated selection of modern and classic pieces.
               </ListItem>
-              <ListItem href="#" title="Typography" onClick={handleTypographyClick}>
-                Styles for headings, paragraphs, lists...etc
+              <ListItem href="#" title="Materials" onClick={handleTypographyClick}>
+                Discover the premium woods, fabrics, and metals we use.
               </ListItem>
             </ul>
           </NavigationMenuContent>
@@ -133,21 +133,21 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>List</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[calc(100vw-3rem)] sm:w-[300px] gap-4">
               <li>
-                <NavigationMenuLink render={<a href="#" />}>
-                  <div className="font-medium">Components</div>
-                  <div className="text-muted-foreground">Browse all components in the library.</div>
+                <NavigationMenuLink render={<a href="mailto:hello@leoncasa.com" />}>
+                  <div className="font-medium">Email</div>
+                  <div className="text-muted-foreground">hello@leoncasa.com</div>
                 </NavigationMenuLink>
-                <NavigationMenuLink render={<a href="#" />}>
-                  <div className="font-medium">Documentation</div>
-                  <div className="text-muted-foreground">Learn how to use the library.</div>
+                <NavigationMenuLink render={<a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" />}>
+                  <div className="font-medium">WhatsApp</div>
+                  <div className="text-muted-foreground">Message us on WhatsApp.</div>
                 </NavigationMenuLink>
-                <NavigationMenuLink render={<a href="#" />}>
-                  <div className="font-medium">Blog</div>
-                  <div className="text-muted-foreground">Read our latest blog posts.</div>
+                <NavigationMenuLink render={<a href="tel:+1234567890" />}>
+                  <div className="font-medium">Phone</div>
+                  <div className="text-muted-foreground">Call us directly.</div>
                 </NavigationMenuLink>
               </li>
             </ul>

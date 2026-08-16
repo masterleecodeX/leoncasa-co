@@ -105,6 +105,7 @@ export default function Hero04Demo() {
 
   const slideProps = {
     ...currentSlide,
+    slideData: currentSlide,
     animation: 'subtle',
     primaryCTA: {
       ctaEnabled: true,

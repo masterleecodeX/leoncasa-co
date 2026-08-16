@@ -91,7 +91,7 @@ export const siteConfig = {
           { title: 'Facebook', href: 'https://www.facebook.com/share/1cQCuQgr3P/?mibextid=wwXIfr', icon: 'FacebookIcon' },
           { title: 'Instagram', href: 'https://www.instagram.com/leoncasa_co?igsh=MXFibHl0NzIxOGFpMQ%3D%3D&utm_source=qr', icon: 'InstagramIcon' },
           { title: 'Tiktok', href: 'https://www.tiktok.com/@leoncasa.co?_r=1&_t=ZS-98lFksXCTRc', icon: 'TiktokIcon' },
-          { title: 'LinkedIn', href: 'YOUR_LINKEDIN_LINK_HERE', icon: 'LinkedinIcon' },
+          { title: 'WhatsApp', href: 'YOUR_WHATSAPP_LINK_HERE', icon: 'WhatsappIcon' },
         ],
       },
     ]

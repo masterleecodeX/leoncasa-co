@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CoverflowCarousel } from "../ui/coverflow-carousel";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
 const R2 = "https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/stock-images";

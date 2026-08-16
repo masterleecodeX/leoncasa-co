@@ -90,7 +90,7 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
       </div>
       
       <div className="flex-1 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <label className="text-[13px] font-medium text-gray-500 ml-1">Product Name</label>
             <input 
@@ -107,6 +107,20 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
               onChange={(e) => handleChange("price", e.target.value)}
               className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
             />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Category</label>
+            <select 
+              value={localProduct.category || "bed"} 
+              onChange={(e) => handleChange("category", e.target.value)}
+              className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all appearance-none"
+            >
+              <option value="bed">Bed</option>
+              <option value="table">Table</option>
+              <option value="lamp">Lamp</option>
+              <option value="sofa">Sofa</option>
+              <option value="chair">Chair</option>
+            </select>
           </div>
         </div>
       </div>
@@ -126,17 +140,7 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
           <Trash className="w-4 h-4" />
         </button>
       </div>
-      {activeTab === "viewers" && (
-        <div className="space-y-6 max-w-2xl">
-          <div className="flex justify-between items-end mb-2">
-            <h2 className="text-xl font-medium tracking-tight text-gray-900">Website Analytics</h2>
-          </div>
-          <div className="p-8 border border-gray-200/75 rounded-[20px] bg-white shadow-sm flex flex-col items-center justify-center">
-            <h3 className="text-lg font-medium text-gray-500 mb-2">Total Unique Visitors</h3>
-            <p className="text-5xl font-bold text-slate-900">{viewerCount}</p>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
@@ -214,6 +218,15 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
               <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => handleChange("washImage", b64))} className="hidden" />
             </label>
           </div>
+          {/* Details Image */}
+          <div className="shrink-0 flex flex-col gap-2 w-32">
+            <span className="text-xs font-medium text-gray-500 text-center">Details Image</span>
+            <img src={localSlide.detailsImage || "https://ferf1mheo22r9ira.public.blob.vercel-storage.com/portrait2-x5MjJSaQ9ed0HZrewEhH7TkZwjZ66K.jpeg"} alt="Details" className="w-full h-32 object-cover rounded-2xl border border-gray-100 shadow-sm" />
+            <label className="cursor-pointer text-center w-full px-2 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-[10px] font-medium text-gray-700 transition-colors">
+              Change Details
+              <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => handleChange("detailsImage", b64))} className="hidden" />
+            </label>
+          </div>
         </div>
 
         {/* Action Buttons */}
@@ -254,6 +267,27 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
             <input value={getMetaValue(localSlide, "Dimensions")} onChange={(e) => handleMetaChange("Dimensions", e.target.value)} className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
           </div>
         </div>
+        
+        {/* DETAILS PAGE FIELDS */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-100 mt-4">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details Title</label>
+            <input value={localSlide.detailsTitle || ""} onChange={(e) => handleChange("detailsTitle", e.target.value)} placeholder="Kokonut." className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
+          </div>
+          <div className="space-y-1.5 sm:col-span-2">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details Subtitle (Season)</label>
+            <input value={localSlide.detailsSeason || ""} onChange={(e) => handleChange("detailsSeason", e.target.value)} placeholder="SUMMER 2025" className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
+          </div>
+          <div className="space-y-1.5 sm:col-span-3">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details Description</label>
+            <textarea value={localSlide.detailsDescription || ""} onChange={(e) => handleChange("detailsDescription", e.target.value)} placeholder="Description..." className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl min-h-[80px]" />
+          </div>
+          <div className="space-y-1.5 sm:col-span-3">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details List (Comma separated)</label>
+            <input value={localSlide.detailsList || ""} onChange={(e) => handleChange("detailsList", e.target.value)} placeholder="Ready-to-wear, Accessories, Footwear" className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
+          </div>
+        </div>
+
       </div>
     </div>
   );
@@ -355,6 +389,7 @@ export default function AdminPage() {
       name: "New Product",
       imageUrl: "https://m.media-amazon.com/images/I/61uSf-0MJzL._AC_SY695_.jpg",
       price: 99.99,
+      category: "bed",
       order: products.length
     };
     await addDoc(collection(db, "products"), newProduct);
@@ -497,6 +532,18 @@ export default function AdminPage() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "viewers" && (
+        <div className="space-y-6 max-w-2xl">
+          <div className="flex justify-between items-end mb-2">
+            <h2 className="text-xl font-medium tracking-tight text-gray-900">Website Analytics</h2>
+          </div>
+          <div className="p-8 border border-gray-200/75 rounded-[20px] bg-white shadow-sm flex flex-col items-center justify-center">
+            <h3 className="text-lg font-medium text-gray-500 mb-2">Total Unique Visitors</h3>
+            <p className="text-5xl font-bold text-slate-900">{viewerCount}</p>
           </div>
         </div>
       )}

@@ -250,8 +250,12 @@ function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="flex w-full items-center justify-between p-4 relative z-50">
-        <NavigationMenuDemo />
-        <HeaderActions />
+        <div className="flex-1 min-w-0">
+          <NavigationMenuDemo />
+        </div>
+        <div className="shrink-0 flex items-center ml-2 sm:ml-4">
+          <HeaderActions />
+        </div>
       </header>
       <main className="flex-1 relative z-10 bg-background overflow-x-hidden">
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 sm:h-12 md:h-16 bg-gradient-to-t from-background to-transparent z-20"></div>
@@ -269,8 +273,12 @@ function GetStartedPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <header className="flex w-full items-center justify-between p-4 relative z-50 text-slate-900">
-        <NavigationMenuDemo showBackArrow={true} />
-        <HeaderActions />
+        <div className="flex-1 min-w-0">
+          <NavigationMenuDemo showBackArrow={true} />
+        </div>
+        <div className="shrink-0 flex items-center ml-2 sm:ml-4">
+          <HeaderActions />
+        </div>
       </header>
       <main className="flex-1 flex flex-col relative z-10 bg-white -mt-[100px] pt-12 pb-24">
         <Hero04Demo />
@@ -284,8 +292,12 @@ function GalleryPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="flex w-full items-center justify-between p-4 relative z-50">
-        <NavigationMenuDemo showBackArrow={true} />
-        <HeaderActions />
+        <div className="flex-1 min-w-0">
+          <NavigationMenuDemo showBackArrow={true} />
+        </div>
+        <div className="shrink-0 flex items-center ml-2 sm:ml-4">
+          <HeaderActions />
+        </div>
       </header>
       <main className="flex-1 relative z-10 bg-background overflow-x-hidden">
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 sm:h-12 md:h-16 bg-gradient-to-t from-background to-transparent z-20"></div>
@@ -297,14 +309,21 @@ function GalleryPage() {
 }
 
 function ProductDetailsPage() {
+  const location = useLocation();
+  const slideData = location.state?.slide || null;
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <header className="flex w-full items-center justify-between p-4 relative z-50 text-slate-900">
-        <NavigationMenuDemo showBackArrow={true} />
-        <HeaderActions />
+        <div className="flex-1 min-w-0">
+          <NavigationMenuDemo showBackArrow={true} />
+        </div>
+        <div className="shrink-0 flex items-center ml-2 sm:ml-4">
+          <HeaderActions />
+        </div>
       </header>
       <main className="flex-1 flex flex-col relative z-10 bg-white">
-        <HeroFashion />
+        <HeroFashion slide={slideData} />
       </main>
       <Footer />
     </div>

@@ -45,7 +45,7 @@ const variantStyles = {
 
 const fanSlots = [
   { width: 'w-[38%]', layout: '-mr-8 z-10', rotate: -6, x: 48, ty: 24 },
-  { width: 'w-[42%]', layout: 'z-20', rotate: 0, x: 0, ty: -8 },
+  { width: 'w-[42%]', layout: 'z-20', rotate: 0, x: 0, ty: 12 },
   { width: 'w-[38%]', layout: '-ml-8 z-10', rotate: 6, x: -48, ty: 24 },
 ]
 
@@ -206,14 +206,47 @@ export function Hero10({
         vs.title,
       )}
     >
-      <Balancer>{title}</Balancer>
+      <Balancer>
+        {title.split('').map((char, index) => (
+            <motion.span
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.03, delay: index * 0.03 }}
+            >
+              {char}
+            </motion.span>
+        ))}
+      </Balancer>
       {(titleLine2Prefix || titleHighlight) && (
         <>
           <br />
           <Balancer>
-            {titleLine2Prefix && <span>{titleLine2Prefix} </span>}
+            {titleLine2Prefix && (
+                titleLine2Prefix.split('').map((char, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.03, delay: (title.length * 0.03) + (index * 0.03) }}
+                    >
+                      {char}
+                    </motion.span>
+                ))
+            )}
+            {titleLine2Prefix && <span> </span>}
             {titleHighlight && (
-              <span className="text-primary">{titleHighlight}</span>
+                titleHighlight.split('').map((char, index) => (
+                    <motion.span
+                      key={index}
+                      className="text-primary"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.03, delay: (title.length * 0.03) + (titleLine2Prefix ? titleLine2Prefix.length * 0.03 : 0) + (index * 0.03) }}
+                    >
+                      {char}
+                    </motion.span>
+                ))
             )}
           </Balancer>
         </>
@@ -280,7 +313,7 @@ export function Hero10({
           {socialProofElement}
         </Reveal>
 
-        <div className={cn('mx-auto w-full mt-4 md:mt-12', vs.fan)}>{mediaElement}</div>
+        <div className={cn('mx-auto w-full mt-12 sm:mt-16 md:mt-20 lg:mt-24', vs.fan)}>{mediaElement}</div>
       </motion.div>
     </section>
   )

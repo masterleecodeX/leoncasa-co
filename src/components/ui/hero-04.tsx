@@ -27,6 +27,7 @@ export interface Hero04Props {
   variant?: 'standard' | 'compact'
   onPrev?: () => void
   onNext?: () => void
+  slideData?: any
 }
 
 const variantStyles = {
@@ -107,6 +108,7 @@ export function Hero04({
   variant = 'standard',
   onPrev,
   onNext,
+  slideData,
 }: Readonly<Hero04Props>) {
   const reduce = useReducedMotion()
   const animate = animation === 'subtle' && !reduce
@@ -235,7 +237,7 @@ export function Hero04({
         </Reveal>
 
         <Reveal active={animate} variants={mediaItem} className="w-full order-1 lg:order-2">
-          <Link to="/details" className="block cursor-pointer">
+          <Link to="/details" state={{ slide: slideData }} className="block cursor-pointer">
             {mediaElement}
           </Link>
         </Reveal>

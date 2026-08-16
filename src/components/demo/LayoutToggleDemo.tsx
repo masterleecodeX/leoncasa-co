@@ -1,19 +1,17 @@
 import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore"
+import { useEffect, useState, useRef } from "react"
+import { collection, onSnapshot } from "firebase/firestore"
 import { db } from "../../lib/firebase"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { ContainerToggle, CellToggle } from "../blocks/animated-toggle-layout-container"
+import { ChevronRight } from "lucide-react"
+import { motion, AnimatePresence } from "motion/react"
 import { Skeleton } from '@/components/ui/skeleton'
 
 const DEFAULT_PRODUCTS = [
   {
     id: "item-9",
-    name: "adidas",
-    imageUrl: "https://m.media-amazon.com/images/I/61uSf-0MJzL._AC_SY695_.jpg",
-    price: 120,
+    name: "adidas", imageUrl: "https://m.media-amazon.com/images/I/61uSf-0MJzL._AC_SY695_.jpg", price: 120, category: "chair",
   },
   {
     id: "item-8",
@@ -73,7 +71,7 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
         />
         <div className="absolute inset-0 z-10" />
       </div>
@@ -107,6 +105,27 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
 
 export default function LayoutToggleDemo() {
   const navigate = useNavigate();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 1);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener("resize", checkScroll);
+    return () => window.removeEventListener("resize", checkScroll);
+  }, []);
+  
+  const handleScrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 150, behavior: 'smooth' });
+    }
+  };
   const CACHE_KEY = "products_grid_cache";
   
   const [products, setProducts] = useState<any[]>(() => {
@@ -125,6 +144,13 @@ export default function LayoutToggleDemo() {
       return true;
     }
   });
+
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const categories = ["All", "Bed", "Table", "Lamp", "Sofa", "Chair"];
+
+  const filteredProducts = selectedCategory === "All" 
+    ? products 
+    : products.filter(p => p.category?.toLowerCase() === selectedCategory.toLowerCase());
 
   useEffect(() => {
     const q = collection(db, "products")
@@ -147,7 +173,7 @@ export default function LayoutToggleDemo() {
 
   if (loading) {
     return (
-      <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">
+      <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900 border-t border-gray-200 mt-8 md:mt-12 pt-8 md:pt-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="flex flex-col overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
@@ -171,18 +197,61 @@ export default function LayoutToggleDemo() {
   }
 
   return (
-    <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900">
-      <ContainerToggle className="w-full">
-        {products.map((product) => (
-          <CellToggle
+    <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900 border-t border-gray-200 mt-8 md:mt-12 pt-8 md:pt-12">
+      <div className="relative mb-8 -mx-4 sm:mx-0">
+        <div ref={scrollContainerRef} onScroll={checkScroll} className="flex overflow-x-auto gap-2 pb-4 px-4 sm:px-0 sm:justify-center scroll-smooth hide-scrollbar">
+        {categories.map(cat => (
+          <button 
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={cn(
+              "px-4 py-2 text-base font-light transition-all duration-300 shrink-0 whitespace-nowrap",
+              selectedCategory === cat 
+                ? "text-black underline underline-offset-4" 
+                : "text-gray-400 hover:text-gray-900"
+            )}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+      {/* Mobile scroll indicator fade */}
+      {showRightArrow && (<button 
+        onClick={handleScrollRight}
+        className="absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-white via-white/80 to-transparent flex items-start justify-end pt-2 sm:hidden cursor-pointer"
+        aria-label="Scroll categories right"
+      >
+        <ChevronRight className="w-5 h-5 text-gray-500 mr-2 mt-0.5 hover:text-black transition-colors" />
+      </button>)}
+      </div>
+      
+      <div className="mb-8 px-4 sm:px-0 text-left">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight text-slate-900 uppercase transition-all duration-300">
+          {selectedCategory === "All" ? "Collection" : selectedCategory}
+        </h2>
+      </div>
+
+          <AnimatePresence mode="wait">
+        <motion.div 
+          key={selectedCategory}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
+        >
+        {filteredProducts.map((product) => (
+          <motion.div
+            whileHover={{ y: -2 }}
             key={product.id}
             onClick={() => navigate('/details')}
             className="cursor-pointer overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm transition-shadow hover:shadow-md"
           >
             <GridProductCard product={product} />
-          </CellToggle>
-        ))}
-      </ContainerToggle>
+          </motion.div>
+        ))}      
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
