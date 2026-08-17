@@ -92,7 +92,7 @@ type ViewAnimationProps = {
 	children: ReactNode;
 };
 
-function AnimatedContainer({ className, delay = 0.1, children }: ViewAnimationProps) {
+function AnimatedContainer({ className, children }: ViewAnimationProps) {
 	const shouldReduceMotion = useReducedMotion();
 
 	if (shouldReduceMotion) {

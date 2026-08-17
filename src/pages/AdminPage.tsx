@@ -266,7 +266,7 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
             <span className="text-[13px] font-medium text-gray-500 ml-1 block mb-2">Details Images</span>
             <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar items-start">
               {(() => {
-                let images = [];
+                let images: string[] = [];
                 if (localSlide.detailsImages && Array.isArray(localSlide.detailsImages)) {
                   images = localSlide.detailsImages;
                 } else {
@@ -433,10 +433,6 @@ export default function AdminPage() {
       order: products.length
     };
     await addDoc(collection(db, "products"), newProduct);
-  };
-
-  const handleUpdateProduct = async (id: string, field: string, value: any) => {
-    await setDoc(doc(db, "products", id), { [field]: field === "price" ? Number(value) : value }, { merge: true });
   };
 
   const handleDeleteProduct = async (id: string) => {

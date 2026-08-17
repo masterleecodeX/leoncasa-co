@@ -8,7 +8,7 @@ export default function HeroFashion({ slide }: { slide?: any }) {
     const detailsTitle = slide?.detailsTitle || "Kokonut.";
     const detailsSeason = slide?.detailsSeason || "SUMMER 2025";
     const detailsDescription = slide?.detailsDescription || `"The Bright Young" draws inspiration from Anglomania, redefining sartorial elegance and school uniforms with a nod to British heritage. Suits of the collection are tailored out of English cloth...`;
-    let images = [];
+    let images: string[] = [];
     if (slide?.detailsImages && Array.isArray(slide.detailsImages) && slide.detailsImages.length > 0) {
         images = slide.detailsImages;
     } else {

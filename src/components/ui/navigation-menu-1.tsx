@@ -133,7 +133,7 @@ function NavigationMenuViewport({
   ...props
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Viewport>) {
   return (
-    <NavigationMenuPrimitive.Viewport className={cn('relative h-full w-full overflow-hidden', className)} {...props} />
+    <NavigationMenuPrimitive.Viewport className={cn('relative h-full w-full overflow-visible', className)} {...props} />
   );
 }
 

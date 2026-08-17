@@ -135,19 +135,42 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
         <NavigationMenuItem>
           <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[calc(100vw-3rem)] sm:w-[300px] gap-4">
+            <ul className="grid w-[calc(100vw-3rem)] sm:w-[300px] gap-4 relative">
               <li>
-                <NavigationMenuLink render={<a href="mailto:hello@leoncasa.com" />}>
+                <NavigationMenuLink render={<a href="mailto:hello@leoncasa.com" target="_top" />}>
                   <div className="font-medium">Email</div>
                   <div className="text-muted-foreground">hello@leoncasa.com</div>
                 </NavigationMenuLink>
-                <NavigationMenuLink render={<a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" />}>
-                  <div className="font-medium">WhatsApp</div>
-                  <div className="text-muted-foreground">Message us on WhatsApp.</div>
-                </NavigationMenuLink>
-                <NavigationMenuLink render={<a href="tel:+1234567890" />}>
+                <div className="group block w-full">
+                  <NavigationMenuLink render={<a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" />}>
+                    <div className="font-medium">WhatsApp</div>
+                    <div className="text-muted-foreground">Message us on WhatsApp.</div>
+                  </NavigationMenuLink>
+                  <div className="absolute top-1/2 -translate-y-1/2 left-[100%] ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 hidden sm:flex items-center justify-center p-1 pointer-events-none z-[100]">
+                    {/* Replace the src below with your actual QR code image path (e.g. "/qr-code.png") */}
+                    <img 
+                      src="https://img.sanishtech.com/u/a66b30e39d5501350f456997f10f48c1.jpg" 
+                      alt="WhatsApp QR Code" 
+                      className="w-full h-full object-contain rounded-sm"
+                    />
+                  </div>
+                </div>
+                <div className="group block w-full">
+                  <NavigationMenuLink render={<a href="#" target="_blank" rel="noopener noreferrer" />}>
+                    <div className="font-medium">WeChat</div>
+                    <div className="text-muted-foreground">Connect with us on WeChat.</div>
+                  </NavigationMenuLink>
+                  <div className="absolute top-1/2 -translate-y-1/2 left-[100%] ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 hidden sm:flex items-center justify-center p-1 pointer-events-none z-[100]">
+                    <img 
+                      src="https://img.sanishtech.com/u/c42bec16ad57b30695d1222702760bed.jpg" 
+                      alt="WeChat QR Code" 
+                      className="w-full h-full object-contain rounded-sm"
+                    />
+                  </div>
+                </div>
+                <NavigationMenuLink render={<a href="tel:0952595058" />}>
                   <div className="font-medium">Phone</div>
-                  <div className="text-muted-foreground">Call us directly.</div>
+                  <div className="text-muted-foreground">095 259 5058</div>
                 </NavigationMenuLink>
               </li>
             </ul>
