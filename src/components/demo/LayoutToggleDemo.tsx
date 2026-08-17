@@ -71,7 +71,7 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          className="w-full h-full object-cover transition-opacity duration-300"
         />
         <div className="absolute inset-0 z-10" />
       </div>
@@ -242,10 +242,9 @@ export default function LayoutToggleDemo() {
         >
         {filteredProducts.map((product) => (
           <motion.div
-            whileHover={{ y: -2 }}
             key={product.id}
             onClick={() => navigate('/details')}
-            className="cursor-pointer overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm transition-shadow hover:shadow-md"
+            className="cursor-pointer overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm transition-all duration-300 hover:brightness-90"
           >
             <GridProductCard product={product} />
           </motion.div>

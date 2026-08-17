@@ -1,22 +1,32 @@
 const fs = require('fs');
+let content = fs.readFileSync('src/pages/AdminPage.tsx', 'utf8');
 
-function removeUnusedImports(filePath) {
-    if (!fs.existsSync(filePath)) return;
-    let content = fs.readFileSync(filePath, 'utf8');
-    
-    // LayoutToggleDemo
-    if (filePath.includes('LayoutToggleDemo')) {
-        content = content.replace('import { collection, onSnapshot, query, orderBy } from "firebase/firestore"', 'import { collection, onSnapshot } from "firebase/firestore"');
-        content = content.replace('import { Button } from "@/components/ui/button"\n', '');
-    }
-    
-    // CoverflowDemo
-    if (filePath.includes('CoverflowDemo')) {
-        content = content.replace('import { collection, onSnapshot, query, orderBy } from "firebase/firestore"', 'import { collection, onSnapshot } from "firebase/firestore"');
-    }
+// The unused handleImageUpload in the main AdminPage component
+const handleImageUploadMatch = `  const handleImageUpload = (file: File | null, callback: (base64: string) => void) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        callback(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };`;
+content = content.replace(handleImageUploadMatch, '');
 
-    fs.writeFileSync(filePath, content);
-}
+// The unused getMetaValue in the main AdminPage component
+const getMetaValueMatch = `  const getMetaValue = (slide: any, label: string) => {
+    const metaItem = slide.meta?.find((m: any) => m.label === label);
+    return metaItem ? metaItem.value : "";
+  };`;
+content = content.replace(getMetaValueMatch, '');
 
-removeUnusedImports('src/components/demo/LayoutToggleDemo.tsx');
-removeUnusedImports('src/components/demo/CoverflowDemo.tsx');
+// The unused handleUpdateProduct
+const handleUpdateProductMatch = `  const handleUpdateProduct = async (id: string, updates: any) => {
+    await setDoc(doc(db, "products", id), updates, { merge: true });
+  };`;
+content = content.replace(handleUpdateProductMatch, '');
+
+
+fs.writeFileSync('src/pages/AdminPage.tsx', content);
+console.log("Fixed unused vars in AdminPage.");

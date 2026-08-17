@@ -125,7 +125,7 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
         </div>
       </div>
       
-      <div className="shrink-0 flex flex-col gap-2 self-start">
+      <div className="shrink-0 flex flex-row sm:flex-col justify-end gap-2 w-full sm:w-auto mt-4 sm:mt-0">
         <Button 
           onClick={handleSave} 
           disabled={!isDirty || isSaving}
@@ -190,7 +190,7 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
       
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Images */}
-        <div className="flex gap-4 overflow-x-auto pb-2">
+        <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
           {/* Primary Image */}
           <div className="shrink-0 flex flex-col gap-2 w-32">
             <span className="text-xs font-medium text-gray-500 text-center">Primary Image</span>
@@ -218,19 +218,11 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
               <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => handleChange("washImage", b64))} className="hidden" />
             </label>
           </div>
-          {/* Details Image */}
-          <div className="shrink-0 flex flex-col gap-2 w-32">
-            <span className="text-xs font-medium text-gray-500 text-center">Details Image</span>
-            <img src={localSlide.detailsImage || "https://ferf1mheo22r9ira.public.blob.vercel-storage.com/portrait2-x5MjJSaQ9ed0HZrewEhH7TkZwjZ66K.jpeg"} alt="Details" className="w-full h-32 object-cover rounded-2xl border border-gray-100 shadow-sm" />
-            <label className="cursor-pointer text-center w-full px-2 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-[10px] font-medium text-gray-700 transition-colors">
-              Change Details
-              <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => handleChange("detailsImage", b64))} className="hidden" />
-            </label>
-          </div>
+
         </div>
 
         {/* Action Buttons */}
-        <div className="sm:ml-auto shrink-0 flex flex-col gap-2 self-start">
+        <div className="sm:ml-auto shrink-0 flex flex-row sm:flex-col justify-end gap-2 w-full sm:w-auto mt-4 sm:mt-0">
           <Button onClick={handleSave} disabled={!isDirty || isSaving} className={`rounded-xl px-4 py-2 text-sm shadow-sm transition-all gap-2 ${isDirty ? 'bg-black hover:bg-gray-800 text-white border-0' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>
             <Save className="w-4 h-4" /> {isSaving ? "Saving..." : "Save"}
           </Button>
@@ -269,12 +261,75 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
         </div>
         
         {/* DETAILS PAGE FIELDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-100 mt-4">
+        <div className="pt-4 border-t border-gray-100 mt-4">
+          <div className="mb-4">
+            <span className="text-[13px] font-medium text-gray-500 ml-1 block mb-2">Details Images</span>
+            <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar items-start">
+              {(() => {
+                let images = [];
+                if (localSlide.detailsImages && Array.isArray(localSlide.detailsImages)) {
+                  images = localSlide.detailsImages;
+                } else {
+                  images = [];
+                  if (localSlide.detailsImage) images.push(localSlide.detailsImage);
+                  if (localSlide.detailsImage2) images.push(localSlide.detailsImage2);
+                  if (localSlide.detailsImage3) images.push(localSlide.detailsImage3);
+                }
+
+                return (
+                  <>
+                    {images.map((imgUrl, idx) => (
+                      <div key={idx} className="shrink-0 flex flex-col gap-2 w-32 relative group">
+                        <img src={imgUrl || `https://placehold.co/400x500/eeeeee/999999?text=Image+${idx + 1}`} alt={`Details ${idx + 1}`} className="w-full h-32 object-cover rounded-2xl border border-gray-100 shadow-sm" />
+                        
+                        <button 
+                          onClick={() => {
+                            const newImages = [...images];
+                            newImages.splice(idx, 1);
+                            handleChange("detailsImages", newImages);
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove image"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        </button>
+
+                        <label className="cursor-pointer text-center w-full px-2 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-[10px] font-medium text-gray-700 transition-colors">
+                          Change Image
+                          <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => {
+                            const newImages = [...images];
+                            newImages[idx] = b64;
+                            handleChange("detailsImages", newImages);
+                          })} className="hidden" />
+                        </label>
+                      </div>
+                    ))}
+                    
+                    <div className="shrink-0 flex flex-col gap-2 w-32">
+                        <label className="w-full h-32 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 border border-dashed border-gray-300 rounded-2xl cursor-pointer transition-colors text-gray-500 hover:text-gray-700">
+                          <Plus className="w-6 h-6 mb-1" />
+                          <span className="text-[10px] font-medium">Add Image</span>
+                          <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => {
+                            const newImages = [...images, b64];
+                            handleChange("detailsImages", newImages);
+                          })} className="hidden" />
+                        </label>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <label className="text-[13px] font-medium text-gray-500 ml-1">Details Title</label>
             <input value={localSlide.detailsTitle || ""} onChange={(e) => handleChange("detailsTitle", e.target.value)} placeholder="Kokonut." className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details List (Comma separated)</label>
+            <input value={localSlide.detailsList || ""} onChange={(e) => handleChange("detailsList", e.target.value)} placeholder="Ready-to-wear, Accessories, Footwear" className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
+          </div>
+          <div className="space-y-1.5 sm:col-span-3">
             <label className="text-[13px] font-medium text-gray-500 ml-1">Details Subtitle (Season)</label>
             <input value={localSlide.detailsSeason || ""} onChange={(e) => handleChange("detailsSeason", e.target.value)} placeholder="SUMMER 2025" className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
           </div>
@@ -282,10 +337,7 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
             <label className="text-[13px] font-medium text-gray-500 ml-1">Details Description</label>
             <textarea value={localSlide.detailsDescription || ""} onChange={(e) => handleChange("detailsDescription", e.target.value)} placeholder="Description..." className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl min-h-[80px]" />
           </div>
-          <div className="space-y-1.5 sm:col-span-3">
-            <label className="text-[13px] font-medium text-gray-500 ml-1">Details List (Comma separated)</label>
-            <input value={localSlide.detailsList || ""} onChange={(e) => handleChange("detailsList", e.target.value)} placeholder="Ready-to-wear, Accessories, Footwear" className="w-full px-4 py-2.5 bg-gray-50/50 focus:bg-white text-sm border border-gray-200 rounded-xl" />
-          </div>
+        </div>
         </div>
 
       </div>
@@ -346,21 +398,9 @@ export default function AdminPage() {
     </div>
   );
 
-  const getMetaValue = (slide: any, label: string) => {
-    const metaItem = slide.meta?.find((m: any) => m.label === label);
-    return metaItem ? metaItem.value : "";
-  };
 
-  const handleImageUpload = (file: File | null, callback: (base64: string) => void) => {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        callback(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
+
+
 
   
   const handleAddHeroSlide = async () => {
@@ -432,28 +472,28 @@ export default function AdminPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Manage Content</h1>
         
-        <div className="inline-flex bg-gray-100/80 p-1 rounded-xl shadow-inner border border-gray-200/60">
+        <div className="flex overflow-x-auto hide-scrollbar bg-gray-100/80 p-1 rounded-xl shadow-inner border border-gray-200/60 w-full md:w-auto">
           <button 
-            className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'hero_gallery' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
+            className={`whitespace-nowrap px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'hero_gallery' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
             onClick={() => setActiveTab("hero_gallery")}
           >
             Hero Gallery
           </button>
 
           <button 
-            className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'products' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
+            className={`whitespace-nowrap px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'products' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
             onClick={() => setActiveTab("products")}
           >
             Products
           </button>
           <button 
-            className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'admins' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
+            className={`whitespace-nowrap px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'admins' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
             onClick={() => setActiveTab("admins")}
           >
             Admins
           </button>
           <button 
-            className={`px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'viewers' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
+            className={`whitespace-nowrap px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'viewers' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
             onClick={() => setActiveTab("viewers")}
           >
             Viewers
@@ -464,7 +504,7 @@ export default function AdminPage() {
       
       {activeTab === "hero_gallery" && (
         <div className="space-y-6">
-          <div className="flex justify-between items-end">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <h2 className="text-xl font-medium tracking-tight text-gray-900">Hero Gallery</h2>
             <Button onClick={handleAddHeroSlide} className="rounded-full px-5 shadow-sm hover:shadow transition-all gap-2 bg-black hover:bg-gray-800 text-white border-0">
               <Plus className="w-4 h-4" /> Add Gallery
@@ -480,7 +520,7 @@ export default function AdminPage() {
 
         {activeTab === "products" && (
         <div className="space-y-6">
-          <div className="flex justify-between items-end">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <h2 className="text-xl font-medium tracking-tight text-gray-900">Grid Products</h2>
             <Button onClick={handleAddProduct} className="rounded-full px-5 shadow-sm hover:shadow transition-all gap-2 bg-black hover:bg-gray-800 text-white border-0">
               <Plus className="w-4 h-4" /> Add Product
@@ -496,7 +536,7 @@ export default function AdminPage() {
 
       {activeTab === "admins" && (
         <div className="space-y-6 max-w-2xl">
-          <div className="flex justify-between items-end mb-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-2">
             <h2 className="text-xl font-medium tracking-tight text-gray-900">Administrators</h2>
           </div>
           
@@ -538,7 +578,7 @@ export default function AdminPage() {
 
       {activeTab === "viewers" && (
         <div className="space-y-6 max-w-2xl">
-          <div className="flex justify-between items-end mb-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-2">
             <h2 className="text-xl font-medium tracking-tight text-gray-900">Website Analytics</h2>
           </div>
           <div className="p-8 border border-gray-200/75 rounded-[20px] bg-white shadow-sm flex flex-col items-center justify-center">
