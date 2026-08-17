@@ -137,7 +137,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
           <NavigationMenuContent>
             <ul className="grid w-[calc(100vw-3rem)] sm:w-[300px] gap-4 relative">
               <li>
-                <NavigationMenuLink render={<a href="mailto:hello@leoncasa.com" target="_top" />}>
+                <NavigationMenuLink render={<a href="mailto:hello@leoncasa.com?subject=Website%20Inquiry&body=Hello%20LeonCasa%20Team,%0A%0A" target="_blank" rel="noopener noreferrer" />}>
                   <div className="font-medium">Email</div>
                   <div className="text-muted-foreground">hello@leoncasa.com</div>
                 </NavigationMenuLink>
