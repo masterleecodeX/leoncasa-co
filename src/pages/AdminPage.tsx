@@ -15,7 +15,7 @@ const handleImageUpload = (file: File | null, callback: (base64: string) => void
       img.onload = () => {
         const canvas = document.createElement("canvas");
         let { width, height } = img;
-        const MAX_SIZE = 1024;
+        const MAX_SIZE = 600;
         if (width > height && width > MAX_SIZE) {
           height *= MAX_SIZE / width;
           width = MAX_SIZE;
@@ -27,7 +27,7 @@ const handleImageUpload = (file: File | null, callback: (base64: string) => void
         canvas.height = height;
         const ctx = canvas.getContext("2d");
         ctx?.drawImage(img, 0, 0, width, height);
-        callback(canvas.toDataURL("image/jpeg", 0.7)); // Compress to 70% JPEG
+        callback(canvas.toDataURL("image/jpeg", 0.5)); // Compress to 70% JPEG
       };
       img.src = reader.result;
     }
@@ -513,6 +513,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"hero_gallery" | "coverflow" | "products" | "admins" | "viewers">("hero_gallery");
   const [viewerCount, setViewerCount] = useState<number>(0);
   const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [isSavingCoverflow, setIsSavingCoverflow] = useState(false);
 
   useEffect(() => {
     const unsubCoverflow = onSnapshot(collection(db, "coverflow"), (snapshot) => {
@@ -740,19 +741,27 @@ export default function AdminPage() {
             
             <div className="pt-4 flex justify-end">
               <Button 
+                disabled={isSavingCoverflow}
                 onClick={async () => {
+                  setIsSavingCoverflow(true);
                   try {
-                    await setDoc(doc(db, "coverflow", coverflowData.id || "main"), coverflowData, { merge: true });
+                    const savePromise = setDoc(doc(db, "coverflow", coverflowData.id || "main"), coverflowData, { merge: true });
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
+                    await Promise.race([savePromise, timeoutPromise]);
+                    
                     localStorage.setItem("coverflow_cache", JSON.stringify(coverflowData));
                     alert("Saved!");
                   } catch (e) {
                     console.error(e);
-                    alert("Failed to save.");
+                    alert("Database limit reached or offline. Saved to local cache only.");
+                    localStorage.setItem("coverflow_cache", JSON.stringify(coverflowData));
+                  } finally {
+                    setIsSavingCoverflow(false);
                   }
                 }}
-                className="rounded-xl px-5 bg-black hover:bg-gray-800 text-white shadow-sm hover:shadow transition-all"
+                className={`rounded-xl px-5 shadow-sm transition-all ${isSavingCoverflow ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-800 hover:shadow'} text-white`}
               >
-                <Save className="w-4 h-4 mr-2" /> Save Images
+                <Save className="w-4 h-4 mr-2" /> {isSavingCoverflow ? "Saving..." : "Save Images"}
               </Button>
             </div>
           </div>
