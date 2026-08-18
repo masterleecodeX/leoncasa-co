@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Hero10Demo from "./components/demo/Hero10Demo";
 import NavigationMenuDemo from "./components/demo/NavigationMenuDemo";
-import TextGradientScrollDemo from "./components/demo/TextGradientScrollDemo";
 import Hero04Demo from "./components/demo/Hero04Demo";
 import LayoutToggleDemo from "./components/demo/LayoutToggleDemo";
 import { Footer } from "./components/ui/footer-section";
@@ -257,9 +256,6 @@ function HomePage() {
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 sm:h-12 md:h-16 bg-gradient-to-t from-background to-transparent z-20"></div>
         <Hero10Demo />
       </main>
-      <section className="w-full bg-background relative z-0">
-        <div id="story-section"><TextGradientScrollDemo /></div>
-      </section>
       <Footer />
     </div>
   );

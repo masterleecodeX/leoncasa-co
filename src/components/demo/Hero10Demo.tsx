@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { collection, doc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { Hero10, type Hero10Props } from '@/components/ui/hero-10'
 import { siteConfig } from '@/config/site'

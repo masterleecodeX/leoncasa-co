@@ -1,5 +1,3 @@
-import whatsappQr from '/whatsapp-qr.jpg';
-import wechatQr from '/wechat-qr.jpg';
 import * as React from 'react';
 import {
   NavigationMenu,
@@ -14,10 +12,8 @@ import {
 } from '@/components/ui/navigation-menu-1';
 import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { siteConfig } from '@/config/site';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const components = siteConfig.navigation;
 const MENU_IMAGE_URL = "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=640&h=640&fit=crop&q=70&auto=format";
 
 export default function NavigationMenuDemo({ showBackArrow = false }: { showBackArrow?: boolean }) {
@@ -123,23 +119,8 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Discover</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[calc(100vw-3rem)] sm:w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {components.map((component) => (
-                <ListItem key={component.title} title={component.title} href={component.href}>
-                  {component.description}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink render={<a href="#story-section" onClick={(e) => { e.preventDefault(); document.getElementById('story-section')?.scrollIntoView({ behavior: 'smooth' }); }} className={navigationMenuTriggerStyle()} />}>
-            Docs
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        
+        
         <NavigationMenuItem>
           <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
           <NavigationMenuContent>

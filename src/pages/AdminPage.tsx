@@ -143,7 +143,7 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
 
                 return (
                   <>
-                    {images.map((imgUrl, idx) => (
+                    {images.map((imgUrl: string, idx: number) => (
                       <div key={idx} className="shrink-0 flex flex-col gap-2 w-32 relative group">
                         <img src={imgUrl || `https://placehold.co/400x500/eeeeee/999999?text=Image+${idx + 1}`} alt={`Details ${idx + 1}`} className="w-full h-32 object-cover rounded-2xl border border-gray-100 shadow-sm" />
                         
@@ -379,7 +379,7 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
 
                 return (
                   <>
-                    {images.map((imgUrl, idx) => (
+                    {images.map((imgUrl: string, idx: number) => (
                       <div key={idx} className="shrink-0 flex flex-col gap-2 w-32 relative group">
                         <img src={imgUrl || `https://placehold.co/400x500/eeeeee/999999?text=Image+${idx + 1}`} alt={`Details ${idx + 1}`} className="w-full h-32 object-cover rounded-2xl border border-gray-100 shadow-sm" />
                         
@@ -548,6 +548,7 @@ export default function AdminPage() {
       unsubHero();
       unsubProducts();
       unsubAdmins();
+      unsubCoverflow();
     };
   }, []);
   if (loading) return <div className="p-8 text-center text-slate-500 flex items-center justify-center min-h-screen">Loading...</div>;

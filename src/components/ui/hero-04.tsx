@@ -36,7 +36,7 @@ const variantStyles = {
     title: 'text-4xl sm:text-5xl md:text-6xl',
     description: 'max-w-md text-sm sm:text-base text-zinc-600',
     header: 'gap-5',
-    grid: 'gap-12 lg:gap-16',
+    grid: 'gap-8 lg:gap-32',
   },
   compact: {
     section: 'py-14 sm:py-20',
@@ -160,7 +160,7 @@ export function Hero04({
     <div className={cn('text-slate-600 flex flex-col items-center lg:items-start text-center lg:text-left w-full', vs.description)}>
       {description && <Balancer>{description}</Balancer>}
       {meta && meta.length > 0 && (
-        <div className="mt-8 flex items-center justify-center lg:justify-start gap-4 sm:gap-8 w-full max-w-[340px] sm:max-w-none mx-auto lg:mx-0">
+        <div className="mt-8 flex items-center justify-center lg:justify-start gap-4 sm:gap-8 w-full max-w-[340px] sm:max-w-[400px] mx-auto lg:mx-0">
           <button
             type="button"
             aria-label="Previous slide"
@@ -193,7 +193,7 @@ export function Hero04({
   )
 
   const ctasElement = (primaryCTA?.ctaEnabled || secondaryCTA?.ctaEnabled) && (
-    <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-center lg:ml-[64px] lg:w-[260px] gap-x-4 gap-y-3 w-full">
+    <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-3 w-full lg:ml-[64px]">
       {primaryCTA?.ctaEnabled && <Cta cta={primaryCTA} />}
       {secondaryCTA?.ctaEnabled && (
         <Cta
@@ -218,7 +218,7 @@ export function Hero04({
 
       <motion.div
         className={cn(
-          'relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center px-6 lg:grid-cols-2',
+          'relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center px-4 sm:px-6 lg:px-8 lg:grid-cols-2',
           vs.section,
           vs.grid,
         )}
