@@ -149,7 +149,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   <div className="hidden sm:flex absolute top-1/2 left-[100%] -translate-y-1/2 ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 items-center justify-center p-1 pointer-events-none z-[100] opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-3 group-hover:translate-x-0">
                     {/* Replace the src below with your actual QR code image path (e.g. "/qr-code.png") */}
                     <img 
-                      src="https://img.sanishtech.com/u/a66b30e39d5501350f456997f10f48c1.jpg" 
+                      src="/whatsapp-qr.jpg" 
                       alt="WhatsApp QR Code" 
                       className="w-full h-full object-contain rounded-sm"
                     />
@@ -162,7 +162,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   </NavigationMenuLink>
                   <div className="hidden sm:flex absolute top-1/2 left-[100%] -translate-y-1/2 ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 items-center justify-center p-1 pointer-events-none z-[100] opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-3 group-hover:translate-x-0">
                     <img 
-                      src="https://img.sanishtech.com/u/c42bec16ad57b30695d1222702760bed.jpg" 
+                      src="/wechat-qr.jpg" 
                       alt="WeChat QR Code" 
                       className="w-full h-full object-contain rounded-sm"
                     />
@@ -175,13 +175,13 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                 <div className="flex sm:hidden items-center justify-center gap-6 pt-3 pb-1 mt-1 border-t border-gray-100/60">
                    <div className="flex flex-col items-center gap-1.5">
                       <div className="w-[100px] h-[100px] bg-white rounded-md shadow-sm border border-gray-100 p-1">
-                        <img src="https://img.sanishtech.com/u/a66b30e39d5501350f456997f10f48c1.jpg" alt="WhatsApp QR" className="w-full h-full object-contain" />
+                        <img src="/whatsapp-qr.jpg" alt="WhatsApp QR" className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[11px] font-medium text-muted-foreground">WhatsApp</span>
                    </div>
                    <div className="flex flex-col items-center gap-1.5">
                       <div className="w-[100px] h-[100px] bg-white rounded-md shadow-sm border border-gray-100 p-1">
-                        <img src="https://img.sanishtech.com/u/c42bec16ad57b30695d1222702760bed.jpg" alt="WeChat QR" className="w-full h-full object-contain" />
+                        <img src="/wechat-qr.jpg" alt="WeChat QR" className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[11px] font-medium text-muted-foreground">WeChat</span>
                    </div>
