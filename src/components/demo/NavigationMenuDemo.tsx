@@ -1,3 +1,5 @@
+import whatsappQr from '/whatsapp-qr.jpg';
+import wechatQr from '/wechat-qr.jpg';
 import * as React from 'react';
 import {
   NavigationMenu,
@@ -149,8 +151,8 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   <div className="hidden sm:flex absolute top-1/2 left-[100%] -translate-y-1/2 ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 items-center justify-center p-1 pointer-events-none z-[100] opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-3 group-hover:translate-x-0">
                     {/* Replace the src below with your actual QR code image path (e.g. "/qr-code.png") */}
                     <img 
-                      src="/whatsapp-qr.jpg" 
-                      alt="WhatsApp QR Code" 
+                      src="https://cdn.phototourl.com/free/2026-08-18-0523a344-3715-4ce0-a37d-091333612cc1.jpg" 
+                      alt="https://cdn.phototourl.com/free/2026-08-18-01b9243f-95c9-4e43-ad9f-bebe69cad8c5.jpg" 
                       className="w-full h-full object-contain rounded-sm"
                     />
                   </div>
@@ -162,8 +164,8 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   </NavigationMenuLink>
                   <div className="hidden sm:flex absolute top-1/2 left-[100%] -translate-y-1/2 ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 items-center justify-center p-1 pointer-events-none z-[100] opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-3 group-hover:translate-x-0">
                     <img 
-                      src="/wechat-qr.jpg" 
-                      alt="WeChat QR Code" 
+                      src="https://cdn.phototourl.com/free/2026-08-18-fb0a63a4-274c-4df6-a82e-e16d729f07cc.jpg" 
+                      alt="https://cdn.phototourl.com/free/2026-08-18-0523a344-3715-4ce0-a37d-091333612cc1.jpg" 
                       className="w-full h-full object-contain rounded-sm"
                     />
                   </div>
