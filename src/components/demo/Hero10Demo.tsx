@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { collection, onSnapshot } from 'firebase/firestore'
+import { collection, doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { Hero10, type Hero10Props } from '@/components/ui/hero-10'
 import { siteConfig } from '@/config/site'
@@ -18,10 +18,9 @@ export default function Hero10Demo() {
   });
 
   useEffect(() => {
-    const q = collection(db, "coverflow");
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const docData = snapshot.docs[0].data();
+    const unsubscribe = onSnapshot(doc(db, "coverflow", "main"), (docSnap) => {
+      if (docSnap.exists()) {
+        const docData = docSnap.data();
         setData(docData);
         localStorage.setItem(CACHE_KEY, JSON.stringify(docData));
       }

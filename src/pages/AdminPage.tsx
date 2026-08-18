@@ -516,9 +516,9 @@ export default function AdminPage() {
   const [isSavingCoverflow, setIsSavingCoverflow] = useState(false);
 
   useEffect(() => {
-    const unsubCoverflow = onSnapshot(collection(db, "coverflow"), (snapshot) => {
-      if (!snapshot.empty) {
-        setCoverflowData({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+    const unsubCoverflow = onSnapshot(doc(db, "coverflow", "main"), (docSnap) => {
+      if (docSnap.exists()) {
+        setCoverflowData({ id: docSnap.id, ...docSnap.data() });
       } else {
         setCoverflowData({ id: "main", title: "", titleLine2Prefix: "", titleHighlight: "", description: "", ctaText: "Get Started", images: ["", "", ""] });
       }
@@ -745,15 +745,12 @@ export default function AdminPage() {
                 onClick={async () => {
                   setIsSavingCoverflow(true);
                   try {
-                    const savePromise = setDoc(doc(db, "coverflow", coverflowData.id || "main"), coverflowData, { merge: true });
-                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
-                    await Promise.race([savePromise, timeoutPromise]);
-                    
+                    await setDoc(doc(db, "coverflow", "main"), coverflowData, { merge: true });
                     localStorage.setItem("coverflow_cache", JSON.stringify(coverflowData));
-                    alert("Saved!");
-                  } catch (e) {
-                    console.error(e);
-                    alert("Database limit reached or offline. Saved to local cache only.");
+                    alert("Saved successfully to the worldwide database!");
+                  } catch (e: any) {
+                    console.error("Save Error:", e);
+                    alert("Error saving to database: " + e.message);
                     localStorage.setItem("coverflow_cache", JSON.stringify(coverflowData));
                   } finally {
                     setIsSavingCoverflow(false);
