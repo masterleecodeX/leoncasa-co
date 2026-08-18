@@ -125,6 +125,9 @@ function GlobalDataPrefetcher() {
           preloadImages(data.map((item: any) => item.imageUrl));
         }
       },
+      (error) => {
+        console.warn("Products listener error (quota exceeded? falling back to cache):", error.message);
+      }
     );
 
     const unsubscribeHeroGallery = onSnapshot(
@@ -138,6 +141,9 @@ function GlobalDataPrefetcher() {
           preloadImages(data.map((item: any) => item.imageSrc));
         }
       },
+      (error) => {
+        console.warn("Hero gallery listener error (quota exceeded? falling back to cache):", error.message);
+      }
     );
 
     return () => {

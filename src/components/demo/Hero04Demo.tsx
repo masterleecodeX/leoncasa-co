@@ -49,8 +49,20 @@ export default function Hero04Demo() {
         setSlides(data);
         localStorage.setItem(CACHE_KEY, JSON.stringify(data));
       } else {
-        setSlides([]);
-        localStorage.setItem(CACHE_KEY, JSON.stringify([]));
+        const defaultSlides = [
+        {
+          badge: "LeonCasa & Co.",
+          title: "The grass farm its your art",
+          description: "",
+          price: "2024",
+          material: "Metal+Glass",
+          dimensions: "120x50",
+          imageSrc: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80",
+          imageAlt: "Interior",
+        }
+      ];
+        setSlides(defaultSlides);
+        // Do not wipe cache, leave as default
       }
       setLoading(false);
     }, (err) => {

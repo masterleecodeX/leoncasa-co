@@ -447,10 +447,10 @@ export default function AdminPage() {
   useEffect(() => {
     const unsubHero = onSnapshot(collection(db, "hero_gallery"), (snapshot) => {
       setHeroSlides(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, (error) => console.warn("Admin hero listener:", error.message));
     const unsubProducts = onSnapshot(collection(db, "products"), (snapshot) => {
       setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, (error) => console.warn("Admin products listener:", error.message));
     const fetchViewers = async () => {
       try {
         const docSnap = await getDoc(doc(db, "analytics", "visitors"));
@@ -463,7 +463,7 @@ export default function AdminPage() {
     
     const unsubAdmins = onSnapshot(collection(db, "admins"), (snapshot) => {
       setAdmins(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, (error) => console.warn("Admin admins listener:", error.message));
 
     return () => {
       unsubHero();

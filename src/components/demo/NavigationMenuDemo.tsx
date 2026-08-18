@@ -177,13 +177,13 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                 <div className="flex sm:hidden items-center justify-center gap-6 pt-3 pb-1 mt-1 border-t border-gray-100/60">
                    <div className="flex flex-col items-center gap-1.5">
                       <div className="w-[100px] h-[100px] bg-white rounded-md shadow-sm border border-gray-100 p-1">
-                        <img src="/whatsapp-qr.jpg" alt="WhatsApp QR" className="w-full h-full object-contain" />
+                        <img src="https://cdn.phototourl.com/free/2026-08-18-0523a344-3715-4ce0-a37d-091333612cc1.jpg" alt="WhatsApp QR" className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[11px] font-medium text-muted-foreground">WhatsApp</span>
                    </div>
                    <div className="flex flex-col items-center gap-1.5">
                       <div className="w-[100px] h-[100px] bg-white rounded-md shadow-sm border border-gray-100 p-1">
-                        <img src="/wechat-qr.jpg" alt="WeChat QR" className="w-full h-full object-contain" />
+                        <img src="https://cdn.phototourl.com/free/2026-08-18-fb0a63a4-274c-4df6-a82e-e16d729f07cc.jpg" alt="WeChat QR" className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[11px] font-medium text-muted-foreground">WeChat</span>
                    </div>
