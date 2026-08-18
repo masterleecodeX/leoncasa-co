@@ -64,6 +64,12 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
         price: Number(localProduct.price)
       };
       await setDoc(doc(db, "products", product.id), payload, { merge: true });
+      const cached = localStorage.getItem("products_grid_cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const updated = parsed.map((p: any) => p.id === product.id ? payload : p);
+        localStorage.setItem("products_grid_cache", JSON.stringify(updated));
+      }
       setIsDirty(false);
     } catch (err) {
       console.error(err);
@@ -266,6 +272,12 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
     setIsSaving(true);
     try {
       await setDoc(doc(db, "hero_gallery", slide.id), localSlide, { merge: true });
+      const cached = localStorage.getItem("hero_gallery_cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const updated = parsed.map((s: any) => s.id === slide.id ? localSlide : s);
+        localStorage.setItem("hero_gallery_cache", JSON.stringify(updated));
+      }
       setIsDirty(false);
     } catch (err) {
       console.error(err);
@@ -437,14 +449,80 @@ function AdminHeroSlideCard({ slide, onDelete }: { slide: any, onDelete: (id: st
 export default function AdminPage() {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
-  const [heroSlides, setHeroSlides] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
+  const [heroSlides, setHeroSlides] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem("hero_gallery_cache");
+      const parsed = cached ? JSON.parse(cached) : [];
+      return parsed.length > 0 ? parsed : [
+        {
+          id: "default-slide-1",
+          badge: "LeonCasa & Co.",
+          title: "The grass farm its your art",
+          description: "",
+          price: "2024",
+          material: "Metal+Glass",
+          dimensions: "120x50",
+          imageSrc: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80",
+          imageAlt: "Interior",
+        }
+];
+    } catch(e) { return [
+        {
+          id: "default-slide-1",
+          badge: "LeonCasa & Co.",
+          title: "The grass farm its your art",
+          description: "",
+          price: "2024",
+          material: "Metal+Glass",
+          dimensions: "120x50",
+          imageSrc: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80",
+          imageAlt: "Interior",
+        }
+]; }
+  });
+  const [coverflowData, setCoverflowData] = useState<any>(() => {
+    try {
+      const cached = localStorage.getItem("coverflow_cache");
+      return cached ? JSON.parse(cached) : {
+  id: "main", title: "", titleLine2Prefix: "", titleHighlight: "", description: "", ctaText: "Get Started", images: ["", "", ""]
+};
+    } catch(e) { return {
+  id: "main", title: "", titleLine2Prefix: "", titleHighlight: "", description: "", ctaText: "Get Started", images: ["", "", ""]
+}; }
+  });
+  const [products, setProducts] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem("products_grid_cache");
+      const parsed = cached ? JSON.parse(cached) : [];
+      return parsed.length > 0 ? parsed : [
+  { id: "default-item-9", name: "adidas", imageUrl: "https://m.media-amazon.com/images/I/61uSf-0MJzL._AC_SY695_.jpg", price: 120, category: "chair" },
+  { id: "default-item-8", name: "Modern Lamp", imageUrl: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=600&auto=format&fit=crop", price: 85, category: "lamp" },
+  { id: "default-item-7", name: "Wooden Table", imageUrl: "https://images.unsplash.com/photo-1577140917170-285929fb55b7?q=80&w=600&auto=format&fit=crop", price: 450, category: "table" },
+  { id: "default-item-6", name: "Lounge Sofa", imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop", price: 890, category: "sofa" },
+  { id: "default-item-5", name: "Classic Bed", imageUrl: "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=600&auto=format&fit=crop", price: 1200, category: "bed" }
+];
+    } catch(e) { return [
+  { id: "default-item-9", name: "adidas", imageUrl: "https://m.media-amazon.com/images/I/61uSf-0MJzL._AC_SY695_.jpg", price: 120, category: "chair" },
+  { id: "default-item-8", name: "Modern Lamp", imageUrl: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=600&auto=format&fit=crop", price: 85, category: "lamp" },
+  { id: "default-item-7", name: "Wooden Table", imageUrl: "https://images.unsplash.com/photo-1577140917170-285929fb55b7?q=80&w=600&auto=format&fit=crop", price: 450, category: "table" },
+  { id: "default-item-6", name: "Lounge Sofa", imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop", price: 890, category: "sofa" },
+  { id: "default-item-5", name: "Classic Bed", imageUrl: "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=600&auto=format&fit=crop", price: 1200, category: "bed" }
+]; }
+  });
   const [admins, setAdmins] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"hero_gallery" | "products" | "admins" | "viewers">("hero_gallery");
+  const [activeTab, setActiveTab] = useState<"hero_gallery" | "coverflow" | "products" | "admins" | "viewers">("hero_gallery");
   const [viewerCount, setViewerCount] = useState<number>(0);
   const [newAdminEmail, setNewAdminEmail] = useState("");
 
   useEffect(() => {
+    const unsubCoverflow = onSnapshot(collection(db, "coverflow"), (snapshot) => {
+      if (!snapshot.empty) {
+        setCoverflowData({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+      } else {
+        setCoverflowData({ id: "main", title: "", titleLine2Prefix: "", titleHighlight: "", description: "", ctaText: "Get Started", images: ["", "", ""] });
+      }
+    }, (error) => console.warn("Admin coverflow listener:", error.message));
+    
     const unsubHero = onSnapshot(collection(db, "hero_gallery"), (snapshot) => {
       setHeroSlides(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }, (error) => console.warn("Admin hero listener:", error.message));
@@ -521,11 +599,25 @@ export default function AdminPage() {
       category: "bed",
       order: products.length
     };
-    await addDoc(collection(db, "products"), newProduct);
+    const docRef = await addDoc(collection(db, "products"), newProduct);
+    const cached = localStorage.getItem("products_grid_cache");
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      parsed.push({ id: docRef.id, ...newProduct });
+      localStorage.setItem("products_grid_cache", JSON.stringify(parsed));
+      setProducts(parsed);
+    }
   };
 
   const handleDeleteProduct = async (id: string) => {
     await deleteDoc(doc(db, "products", id));
+    const cached = localStorage.getItem("products_grid_cache");
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      const filtered = parsed.filter((p: any) => p.id !== id);
+      localStorage.setItem("products_grid_cache", JSON.stringify(filtered));
+      setProducts(filtered);
+    }
   };
 
   const handleAddAdmin = async (e: React.FormEvent) => {
@@ -563,6 +655,12 @@ export default function AdminPage() {
             onClick={() => setActiveTab("hero_gallery")}
           >
             Hero Gallery
+          </button>
+          <button 
+            className={`whitespace-nowrap px-5 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === 'coverflow' ? 'bg-white text-black shadow-sm border border-gray-200/50' : 'text-gray-500 hover:text-gray-900'}`}
+            onClick={() => setActiveTab("coverflow")}
+          >
+            Bottom Coverflow
           </button>
 
           <button 
@@ -603,7 +701,65 @@ export default function AdminPage() {
         </div>
       )}
 
-        {activeTab === "products" && (
+        
+      
+      {activeTab === "coverflow" && coverflowData && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+            <h2 className="text-xl font-medium tracking-tight text-gray-900">Bottom Coverflow Images</h2>
+          </div>
+          <div className="p-5 border border-gray-200/75 rounded-[20px] bg-white shadow-sm space-y-4">
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4">
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="space-y-3">
+                  <label className="text-[13px] font-medium text-gray-500 ml-1">{['Left', 'Center', 'Right'][index]} Image</label>
+                  <div className="w-full aspect-[3/4] bg-gray-50 rounded-2xl border border-gray-100 shadow-inner flex items-center justify-center p-2 overflow-hidden">
+                    {coverflowData.images?.[index] ? (
+                      <img src={coverflowData.images[index]} alt={`Coverflow ${index}`} className="w-full h-full object-cover rounded-xl" />
+                    ) : (
+                      <span className="text-gray-400 text-sm">No image</span>
+                    )}
+                  </div>
+                  <label className="cursor-pointer flex items-center justify-center w-full px-3 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-[13px] font-medium text-gray-700 transition-colors">
+                    Upload Image
+                    <input 
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (base64) => {
+                        const newImages = [...(coverflowData.images || ["", "", ""])];
+                        newImages[index] = base64;
+                        setCoverflowData({ ...coverflowData, images: newImages });
+                      })}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              ))}
+            </div>
+            
+            <div className="pt-4 flex justify-end">
+              <Button 
+                onClick={async () => {
+                  try {
+                    await setDoc(doc(db, "coverflow", coverflowData.id || "main"), coverflowData, { merge: true });
+                    localStorage.setItem("coverflow_cache", JSON.stringify(coverflowData));
+                    alert("Saved!");
+                  } catch (e) {
+                    console.error(e);
+                    alert("Failed to save.");
+                  }
+                }}
+                className="rounded-xl px-5 bg-black hover:bg-gray-800 text-white shadow-sm hover:shadow transition-all"
+              >
+                <Save className="w-4 h-4 mr-2" /> Save Images
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "products" && (
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <h2 className="text-xl font-medium tracking-tight text-gray-900">Grid Products</h2>

@@ -29,6 +29,12 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
     // Preload the image so it appears instantly when the dropdown opens
     const img = new Image();
     img.src = MENU_IMAGE_URL;
+    
+    // Preload QR codes for instant rendering
+    const qr1 = new Image();
+    qr1.src = "https://cdn.phototourl.com/free/2026-08-18-0523a344-3715-4ce0-a37d-091333612cc1.jpg";
+    const qr2 = new Image();
+    qr2.src = "https://cdn.phototourl.com/free/2026-08-18-fb0a63a4-274c-4df6-a82e-e16d729f07cc.jpg";
   }, []);
 
   const handleIntroductionClick = (e: React.MouseEvent) => {

@@ -50,7 +50,7 @@ export function Footer() {
 
 			<div className="flex flex-col xl:flex-row items-start justify-between w-full gap-12 xl:gap-8">
 				<AnimatedContainer className="space-y-4 xl:w-1/3">
-					<span className="font-semibold text-lg">Your Company</span>
+					<span className="font-semibold text-lg">LeonCasa & Co.</span>
 					<p className="text-muted-foreground text-sm max-w-sm">
 						{siteConfig.footer.copyright}
 					</p>
