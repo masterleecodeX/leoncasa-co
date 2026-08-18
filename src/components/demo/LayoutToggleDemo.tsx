@@ -86,7 +86,7 @@ function GridProductCard({ product }: { product: typeof DEFAULT_PRODUCTS[0] }) {
             {(product as any).description || "High performance running shoes designed for ultimate comfort and speed. Experience the perfect blend of style and engineering."}
           </p>
           <span 
-            onClick={() => navigate('/details')}
+            onClick={() => navigate('/details', { state: { slide: product } })}
             className="inline-block mt-1 font-medium underline cursor-pointer text-slate-900 hover:text-black transition-colors"
           >
             See more
@@ -243,7 +243,7 @@ export default function LayoutToggleDemo() {
         {filteredProducts.map((product) => (
           <motion.div
             key={product.id}
-            onClick={() => navigate('/details')}
+            onClick={() => navigate('/details', { state: { slide: product } })}
             className="cursor-pointer overflow-hidden rounded-xl bg-white border border-gray-200 shadow-sm transition-all duration-300 hover:brightness-90"
           >
             <GridProductCard product={product} />

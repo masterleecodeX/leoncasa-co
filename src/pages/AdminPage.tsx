@@ -108,6 +108,94 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
               className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all"
             />
           </div>
+          <div className="space-y-1.5 sm:col-span-3">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Description</label>
+            <textarea 
+              value={localProduct.description || ""} 
+              onChange={(e) => handleChange("description", e.target.value)}
+              placeholder="High performance running shoes designed for ultimate comfort and speed."
+              className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all appearance-none min-h-[80px]"
+            />
+          </div>
+        </div>
+
+        {/* DETAILS PAGE FIELDS */}
+        <div className="pt-4 border-t border-gray-100 mt-4">
+          <div className="mb-4">
+            <span className="text-[13px] font-medium text-gray-500 ml-1 block mb-2">Details Images</span>
+            <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar items-start">
+              {(() => {
+                let images = [];
+                if (localProduct.detailsImages && Array.isArray(localProduct.detailsImages)) {
+                  images = localProduct.detailsImages;
+                } else {
+                  images = [];
+                  if (localProduct.detailsImage) images.push(localProduct.detailsImage);
+                  if (localProduct.detailsImage2) images.push(localProduct.detailsImage2);
+                  if (localProduct.detailsImage3) images.push(localProduct.detailsImage3);
+                }
+
+                return (
+                  <>
+                    {images.map((imgUrl, idx) => (
+                      <div key={idx} className="shrink-0 flex flex-col gap-2 w-32 relative group">
+                        <img src={imgUrl || `https://placehold.co/400x500/eeeeee/999999?text=Image+${idx + 1}`} alt={`Details ${idx + 1}`} className="w-full h-32 object-cover rounded-2xl border border-gray-100 shadow-sm" />
+                        
+                        <button 
+                          onClick={() => {
+                            const newImages = [...images];
+                            newImages.splice(idx, 1);
+                            handleChange("detailsImages", newImages);
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove image"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        </button>
+
+                        <label className="cursor-pointer text-center w-full px-2 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-[10px] font-medium text-gray-700 transition-colors">
+                          Change Image
+                          <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => {
+                            const newImages = [...images];
+                            newImages[idx] = b64;
+                            handleChange("detailsImages", newImages);
+                          })} className="hidden" />
+                        </label>
+                      </div>
+                    ))}
+                    
+                    <div className="shrink-0 flex flex-col gap-2 w-32">
+                        <label className="w-full h-32 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 border border-dashed border-gray-300 rounded-2xl cursor-pointer transition-colors text-gray-500 hover:text-gray-700">
+                          <Plus className="w-6 h-6 mb-1" />
+                          <span className="text-[10px] font-medium">Add Image</span>
+                          <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0] || null, (b64) => {
+                            const newImages = [...images, b64];
+                            handleChange("detailsImages", newImages);
+                          })} className="hidden" />
+                        </label>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details Title</label>
+            <input value={localProduct.detailsTitle || ""} onChange={(e) => handleChange("detailsTitle", e.target.value)} placeholder="Kokonut." className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all" />
+          </div>
+          <div className="space-y-1.5 sm:col-span-2">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details List (Comma separated)</label>
+            <input value={localProduct.detailsList || ""} onChange={(e) => handleChange("detailsList", e.target.value)} placeholder="Ready-to-wear, Accessories, Footwear" className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all" />
+          </div>
+          <div className="space-y-1.5 sm:col-span-3">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details Subtitle (Season)</label>
+            <input value={localProduct.detailsSeason || ""} onChange={(e) => handleChange("detailsSeason", e.target.value)} placeholder="SUMMER 2025" className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all" />
+          </div>
+          <div className="space-y-1.5 sm:col-span-3">
+            <label className="text-[13px] font-medium text-gray-500 ml-1">Details Description</label>
+            <textarea value={localProduct.detailsDescription || ""} onChange={(e) => handleChange("detailsDescription", e.target.value)} placeholder="Description..." className="w-full px-4 py-2.5 bg-gray-50/50 hover:bg-gray-50 focus:bg-white text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all min-h-[80px]" />
+          </div>
           <div className="space-y-1.5">
             <label className="text-[13px] font-medium text-gray-500 ml-1">Category</label>
             <select 
@@ -123,6 +211,7 @@ function AdminProductCard({ product, onDelete }: { product: any, onDelete: (id: 
             </select>
           </div>
         </div>
+      </div>
       </div>
       
       <div className="shrink-0 flex flex-row sm:flex-col justify-end gap-2 w-full sm:w-auto mt-4 sm:mt-0">

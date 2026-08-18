@@ -112,16 +112,7 @@ function GlobalDataPrefetcher() {
     };
 
     // Eagerly fetch and cache data on app load to eliminate latency
-    const unsubscribeCoverflow = onSnapshot(
-      collection(db, "coverflow"),
-      (snapshot) => {
-        if (!snapshot.empty) {
-          const data = snapshot.docs.map((doc) => doc.data() as any);
-          localStorage.setItem("coverflow_slides_cache", JSON.stringify(data));
-          preloadImages(data.map((item: any) => item.imageSrc));
-        }
-      },
-    );
+
 
     const unsubscribeProducts = onSnapshot(
       collection(db, "products"),
@@ -150,7 +141,6 @@ function GlobalDataPrefetcher() {
     );
 
     return () => {
-      unsubscribeCoverflow();
       unsubscribeProducts();
       unsubscribeHeroGallery();
     };
@@ -262,7 +252,7 @@ function HomePage() {
         <Hero10Demo />
       </main>
       <section className="w-full bg-background relative z-0">
-        <TextGradientScrollDemo />
+        <div id="story-section"><TextGradientScrollDemo /></div>
       </section>
       <Footer />
     </div>

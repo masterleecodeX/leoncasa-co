@@ -3,11 +3,13 @@ import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { Hero04, type Hero04Props } from '@/components/ui/hero-04'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Hero04Demo() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const CACHE_KEY = "hero_gallery_cache";
   
@@ -110,7 +112,7 @@ export default function Hero04Demo() {
     primaryCTA: {
       ctaEnabled: true,
       text: t('See more'),
-      link: '#installation-section',
+      onClick: () => navigate('/details', { state: { slide: currentSlide } }),
       variant: 'default',
       size: 'default',
     },

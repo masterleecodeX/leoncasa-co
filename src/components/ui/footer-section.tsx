@@ -2,6 +2,7 @@
 import React from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { siteConfig } from '@/config/site';
 
 const FacebookIcon = (props: any) => (
@@ -66,13 +67,25 @@ export function Footer() {
                                         const Icon = iconName ? iconsMap[iconName] : null;
                                         return (
                                             <li key={link.title}>
-                                                <a
-                                                    href={link.href}
-                                                    className="hover:text-foreground inline-flex items-center transition-all duration-300"
-                                                >
-                                                    {Icon && <Icon className="me-1 size-4" />}
-                                                    {link.title}
-                                                </a>
+                                                {link.href.startsWith('http') || link.href.startsWith('mailto') ? (
+                                                    <a
+                                                        href={link.href}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="hover:text-foreground inline-flex items-center transition-all duration-300"
+                                                    >
+                                                        {Icon && <Icon className="me-1 size-4" />}
+                                                        {link.title}
+                                                    </a>
+                                                ) : (
+                                                    <Link
+                                                        to={link.href}
+                                                        className="hover:text-foreground inline-flex items-center transition-all duration-300"
+                                                    >
+                                                        {Icon && <Icon className="me-1 size-4" />}
+                                                        {link.title}
+                                                    </Link>
+                                                )}
                                             </li>
                                         );
                                     })}

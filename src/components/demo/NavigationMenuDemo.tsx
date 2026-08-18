@@ -64,7 +64,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
     <>
       <div className="relative w-full max-w-[100vw] sm:max-w-none flex-1 min-w-0">
         
-        <div className="w-[calc(100%+2rem)] sm:w-full overflow-x-auto [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
+        <div className="w-[calc(100%+2rem)] sm:w-full overflow-x-auto hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
           <div 
             className={cn(
               "fixed inset-0 z-40 bg-background/30 backdrop-blur-[2px] transition-all duration-500 ease-out",
@@ -75,7 +75,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
       <NavigationMenuList className="flex-nowrap justify-start">
         {showBackArrow && (
           <NavigationMenuItem>
-            <button onClick={() => navigate(-1)} className={cn(navigationMenuTriggerStyle(), "px-2 mr-1 cursor-pointer bg-transparent border-0")}>
+            <button onClick={(e) => { e.preventDefault(); navigate('/'); }} className={cn(navigationMenuTriggerStyle(), "px-3 py-2 mr-1 cursor-pointer bg-slate-50/50 hover:bg-slate-100 rounded-md transition-colors relative z-50 focus:outline-none ")}>
               <ChevronLeft className="h-4 w-4" />
             </button>
           </NavigationMenuItem>
@@ -98,7 +98,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   <div className="relative z-10">
                     <div className="mt-4 mb-2 text-lg font-medium text-white">LeonCasa & Co.</div>
                     <p className="text-white/80 text-sm leading-tight">
-                      Discover premium, handcrafted furniture designed to elevate your living spaces.
+                      Quality. Craftsmanship. Confidence.
                     </p>
                   </div>
                 </NavigationMenuLink>
@@ -116,7 +116,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Discover</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[calc(100vw-3rem)] sm:w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {components.map((component) => (
@@ -128,7 +128,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink render={<a href="#" className={navigationMenuTriggerStyle()} />}>
+          <NavigationMenuLink render={<a href="#story-section" onClick={(e) => { e.preventDefault(); document.getElementById('story-section')?.scrollIntoView({ behavior: 'smooth' }); }} className={navigationMenuTriggerStyle()} />}>
             Docs
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -142,11 +142,11 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   <div className="text-muted-foreground">hello@leoncasa.com</div>
                 </NavigationMenuLink>
                 <div className="group block w-full">
-                  <NavigationMenuLink render={<a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" />}>
+                  <NavigationMenuLink render={<a href="https://wa.me/66952595058" target="_blank" rel="noopener noreferrer" />}>
                     <div className="font-medium">WhatsApp</div>
                     <div className="text-muted-foreground">Message us on WhatsApp.</div>
                   </NavigationMenuLink>
-                  <div className="absolute top-1/2 -translate-y-1/2 left-[100%] ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 hidden sm:flex items-center justify-center p-1 pointer-events-none z-[100]">
+                  <div className="hidden sm:flex absolute top-1/2 left-[100%] -translate-y-1/2 ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 items-center justify-center p-1 pointer-events-none z-[100] opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-3 group-hover:translate-x-0">
                     {/* Replace the src below with your actual QR code image path (e.g. "/qr-code.png") */}
                     <img 
                       src="https://img.sanishtech.com/u/a66b30e39d5501350f456997f10f48c1.jpg" 
@@ -156,11 +156,11 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   </div>
                 </div>
                 <div className="group block w-full">
-                  <NavigationMenuLink render={<a href="#" target="_blank" rel="noopener noreferrer" />}>
+                  <NavigationMenuLink render={<a href="weixin://dl/chat?66952595058" target="_blank" rel="noopener noreferrer" />}>
                     <div className="font-medium">WeChat</div>
                     <div className="text-muted-foreground">Connect with us on WeChat.</div>
                   </NavigationMenuLink>
-                  <div className="absolute top-1/2 -translate-y-1/2 left-[100%] ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 hidden sm:flex items-center justify-center p-1 pointer-events-none z-[100]">
+                  <div className="hidden sm:flex absolute top-1/2 left-[100%] -translate-y-1/2 ml-4 w-[180px] h-[180px] bg-white rounded-lg shadow-xl border border-gray-100 items-center justify-center p-1 pointer-events-none z-[100] opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-3 group-hover:translate-x-0">
                     <img 
                       src="https://img.sanishtech.com/u/c42bec16ad57b30695d1222702760bed.jpg" 
                       alt="WeChat QR Code" 
@@ -172,6 +172,20 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
                   <div className="font-medium">Phone</div>
                   <div className="text-muted-foreground">095 259 5058</div>
                 </NavigationMenuLink>
+                <div className="flex sm:hidden items-center justify-center gap-6 pt-3 pb-1 mt-1 border-t border-gray-100/60">
+                   <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-[100px] h-[100px] bg-white rounded-md shadow-sm border border-gray-100 p-1">
+                        <img src="https://img.sanishtech.com/u/a66b30e39d5501350f456997f10f48c1.jpg" alt="WhatsApp QR" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-[11px] font-medium text-muted-foreground">WhatsApp</span>
+                   </div>
+                   <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-[100px] h-[100px] bg-white rounded-md shadow-sm border border-gray-100 p-1">
+                        <img src="https://img.sanishtech.com/u/c42bec16ad57b30695d1222702760bed.jpg" alt="WeChat QR" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-[11px] font-medium text-muted-foreground">WeChat</span>
+                   </div>
+                </div>
               </li>
             </ul>
           </NavigationMenuContent>

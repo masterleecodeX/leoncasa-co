@@ -5,15 +5,15 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function HeroFashion({ slide }: { slide?: any }) {
-    const detailsTitle = slide?.detailsTitle || "Kokonut.";
-    const detailsSeason = slide?.detailsSeason || "SUMMER 2025";
-    const detailsDescription = slide?.detailsDescription || `"The Bright Young" draws inspiration from Anglomania, redefining sartorial elegance and school uniforms with a nod to British heritage. Suits of the collection are tailored out of English cloth...`;
+    const detailsTitle = slide?.detailsTitle || slide?.title || slide?.name || "Kokonut.";
+    const detailsSeason = slide?.detailsSeason || slide?.badge || (slide?.price ? `Price: ${slide?.price}` : "SUMMER 2025");
+    const detailsDescription = slide?.detailsDescription || slide?.description || `"The Bright Young" draws inspiration from Anglomania, redefining sartorial elegance and school uniforms with a nod to British heritage. Suits of the collection are tailored out of English cloth...`;
     let images: string[] = [];
     if (slide?.detailsImages && Array.isArray(slide.detailsImages) && slide.detailsImages.length > 0) {
         images = slide.detailsImages;
     } else {
         images = [
-            slide?.detailsImage || "https://ferf1mheo22r9ira.public.blob.vercel-storage.com/portrait2-x5MjJSaQ9ed0HZrewEhH7TkZwjZ66K.jpeg"
+            slide?.detailsImage || slide?.imageSrc || slide?.imageUrl || "https://ferf1mheo22r9ira.public.blob.vercel-storage.com/portrait2-x5MjJSaQ9ed0HZrewEhH7TkZwjZ66K.jpeg"
         ];
         if (slide?.detailsImage2) images.push(slide.detailsImage2);
         if (slide?.detailsImage3) images.push(slide.detailsImage3);
@@ -37,8 +37,8 @@ export default function HeroFashion({ slide }: { slide?: any }) {
 
     return (
         <div className="w-full bg-white flex flex-col items-center py-12 md:py-16">
-            <div className="w-full max-w-5xl px-6 md:px-8">
-                <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center relative overflow-visible">
+            <div className="w-full max-w-6xl px-6 md:px-8 lg:px-12">
+                <div className="grid md:grid-cols-2 gap-10 md:gap-20 lg:gap-32 items-center relative overflow-visible">
                                         <div className="md:order-2 relative flex justify-center md:justify-end min-w-0 w-full">
                         <div className="absolute -z-10 w-64 h-64 rounded-full bg-slate-200 blur-3xl opacity-40 -top-6 -left-6"></div>
                         
