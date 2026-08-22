@@ -75,8 +75,8 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
               value != null ? "opacity-100" : "opacity-0 pointer-events-none"
             )} 
           />
-          <NavigationMenu value={value} onValueChange={setValue} className="relative z-50 min-w-max mx-auto md:mx-0">
-      <NavigationMenuList className="flex-nowrap justify-start">
+          <NavigationMenu value={value} onValueChange={setValue} className="relative z-50 min-w-max">
+      <NavigationMenuList className="flex-nowrap justify-start w-full">
         {showBackArrow && (
           <NavigationMenuItem>
             <button onClick={(e) => { e.preventDefault(); navigate('/'); }} className={cn(navigationMenuTriggerStyle(), "px-3 py-2 mr-1 cursor-pointer bg-slate-50/50 hover:bg-slate-100 rounded-md transition-colors relative z-50 focus:outline-none ")}>

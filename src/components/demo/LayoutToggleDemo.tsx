@@ -146,7 +146,7 @@ export default function LayoutToggleDemo() {
   });
 
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const categories = ["All", "Bed", "Table", "Lamp", "Sofa", "Chair"];
+  const categories = ["All", "Living room", "Bedroom", "Dining room", "Kitchen", "Bathroom", "Office", "Outdoor", "Lighting & decoration"];
 
   const filteredProducts = selectedCategory === "All" 
     ? products 
