@@ -79,7 +79,7 @@ export default function NavigationMenuDemo({ showBackArrow = false }: { showBack
       <NavigationMenuList className="flex-nowrap justify-start w-full">
         {showBackArrow && (
           <NavigationMenuItem>
-            <button onClick={(e) => { e.preventDefault(); navigate('/'); }} className={cn(navigationMenuTriggerStyle(), "px-3 py-2 mr-1 cursor-pointer bg-slate-50/50 hover:bg-slate-100 rounded-md transition-colors relative z-50 focus:outline-none ")}>
+            <button onClick={(e) => { e.preventDefault(); navigate('/'); }} className={cn(navigationMenuTriggerStyle(), "px-3 py-2 mr-1 cursor-pointer bg-transparent hover:bg-slate-100 rounded-md transition-colors relative z-50 focus:outline-none ")}>
               <ChevronLeft className="h-4 w-4" />
             </button>
           </NavigationMenuItem>

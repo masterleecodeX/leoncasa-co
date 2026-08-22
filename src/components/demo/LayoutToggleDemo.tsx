@@ -173,7 +173,7 @@ export default function LayoutToggleDemo() {
 
   if (loading) {
     return (
-      <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900 border-t border-gray-200 mt-8 md:mt-12 pt-8 md:pt-12">
+      <div id="collection-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900 border-t border-gray-200 mt-8 md:mt-12 pt-8 md:pt-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="flex flex-col overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
@@ -197,7 +197,7 @@ export default function LayoutToggleDemo() {
   }
 
   return (
-    <div id="installation-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900 border-t border-gray-200 mt-8 md:mt-12 pt-8 md:pt-12">
+    <div id="collection-section" className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:py-8 text-slate-900 border-t border-gray-200 mt-8 md:mt-12 pt-8 md:pt-12">
       <div className="relative mb-8 -mx-4 sm:mx-0">
         <div ref={scrollContainerRef} onScroll={checkScroll} className="flex overflow-x-auto gap-2 pb-4 px-4 sm:px-0 sm:justify-center scroll-smooth hide-scrollbar">
         {categories.map(cat => (

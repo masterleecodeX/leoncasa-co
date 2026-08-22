@@ -124,12 +124,22 @@ export default function Hero04Demo() {
     primaryCTA: {
       ctaEnabled: true,
       text: t('See more'),
-      onClick: () => navigate('/details', { state: { slide: currentSlide } }),
+      onClick: () => {
+        const el = document.getElementById('collection-section');
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      },
       variant: 'default',
       size: 'default',
     },
     secondaryCTA: {
-      ctaEnabled: false,
+      ctaEnabled: true,
+      text: "View",
+      onClick: () => navigate('/details', { state: { slide: currentSlide } }),
+      variant: 'link',
+      className: 'underline underline-offset-4 text-slate-900 font-medium px-4 hover:text-black',
     }
   } as Hero04Props;
 

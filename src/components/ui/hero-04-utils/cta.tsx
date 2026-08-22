@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 
 export interface CtaProps {
+  className?: string;
   ctaEnabled?: boolean;
   text?: string;
   link?: string;
@@ -18,7 +19,7 @@ export function Cta({ cta }: { cta: CtaProps }) {
       <Button 
         variant={cta.variant || 'default'} 
         size={cta.size || 'default'} 
-        className={cta.variant === 'link' ? '' : 'rounded-full px-6'}
+        className={cta.variant === 'link' ? (cta.className || 'underline') : 'rounded-full px-6'}
         onClick={cta.onClick}
       >
         {cta.text}
@@ -30,7 +31,7 @@ export function Cta({ cta }: { cta: CtaProps }) {
     <Button 
       variant={cta.variant || 'default'} 
       size={cta.size || 'default'} 
-      className={cta.variant === 'link' ? '' : 'rounded-full px-6'}
+      className={cta.variant === 'link' ? (cta.className || 'underline') : 'rounded-full px-6'}
       asChild
     >
       {cta.link?.startsWith('#') ? (

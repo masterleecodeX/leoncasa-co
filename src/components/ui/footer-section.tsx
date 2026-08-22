@@ -48,15 +48,15 @@ export function Footer() {
 		<footer className="md:rounded-t-6xl relative w-full max-w-6xl mx-auto flex flex-col items-center justify-center rounded-t-4xl bg-[radial-gradient(35%_128px_at_50%_0%,theme(backgroundColor.white/8%),transparent)] px-6 py-12 lg:py-16">
 			<div className="bg-foreground/20 absolute top-0 right-1/2 left-1/2 h-px w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur" />
 
-			<div className="flex flex-col xl:flex-row items-start justify-between w-full gap-12 xl:gap-8">
-				<AnimatedContainer className="space-y-4 xl:w-1/3">
+			<div className="flex flex-col md:flex-row items-start justify-between w-full gap-12 md:gap-8">
+				<AnimatedContainer className="space-y-4 md:w-1/3">
 					<span className="font-semibold text-lg">LeonCasa & Co.</span>
 					<p className="text-muted-foreground text-sm max-w-sm">
 						{siteConfig.footer.copyright}
 					</p>
 				</AnimatedContainer>
 
-				<div className="grid grid-cols-2 gap-8 sm:grid-cols-4 xl:w-2/3">
+				<div className="grid grid-cols-2 gap-8 w-full md:w-2/3 md:flex md:justify-end md:gap-24 lg:gap-32">
 					{siteConfig.footer.links.map((section, index) => (
 						<AnimatedContainer key={section.label} delay={0.1 + index * 0.1}>
 							<div className="mb-6 md:mb-0">

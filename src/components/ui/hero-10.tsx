@@ -25,11 +25,11 @@ export interface Hero10Props {
 const variantStyles = {
   standard: {
     section: 'py-6 sm:py-16 md:py-28',
-    title: 'text-3xl sm:text-4xl md:text-5xl',
+    title: 'text-[clamp(1.75rem,7.5vw,3.75rem)] leading-[1.1] mx-auto tracking-tight',
     description: 'max-w-lg text-sm sm:text-base',
     header: 'gap-3 sm:gap-5',
     content: 'gap-4 sm:gap-8 md:gap-10',
-    fan: 'max-w-3xl',
+    fan: 'max-w-[90vw] md:max-w-2xl lg:max-w-3xl px-2 md:px-8 lg:px-0',
     fanCard: 'aspect-4/5',
   },
   compact: {
@@ -206,7 +206,7 @@ export function Hero10({
         vs.title,
       )}
     >
-      <Balancer>
+      <span className="inline-block whitespace-nowrap">
         {title.split('').map((char, index) => (
             <motion.span
               key={index}
@@ -216,12 +216,11 @@ export function Hero10({
             >
               {char}
             </motion.span>
-        ))}
-      </Balancer>
+        ))}</span>
       {(titleLine2Prefix || titleHighlight) && (
         <>
           <br />
-          <Balancer>
+          <span className="inline-block whitespace-nowrap">
             {titleLine2Prefix && (
                 titleLine2Prefix.split('').map((char, index) => (
                     <motion.span
@@ -247,8 +246,7 @@ export function Hero10({
                       {char}
                     </motion.span>
                 ))
-            )}
-          </Balancer>
+            )}</span>
         </>
       )}
     </h1>
@@ -299,21 +297,35 @@ export function Hero10({
       >
         <Reveal
           active={animate}
+          className="flex w-full flex-col items-center order-1"
+        >
+          {titleElement}
+        </Reveal>
+        <Reveal
+          active={animate}
           className={cn(
-            'flex w-full max-w-2xl flex-col items-center',
+            'flex w-full max-w-2xl flex-col items-center order-2 sm:order-2 mt-4 sm:mt-0',
             vs.header,
           )}
         >
-          {titleElement}
-          {descriptionElement}
+          {/* We only want this on desktop */}
+          <div className="hidden sm:block">{descriptionElement}</div>
         </Reveal>
-
-        <Reveal active={animate} className="flex flex-col items-center gap-4">
+        <Reveal active={animate} className="flex flex-col items-center gap-4 order-3 sm:order-3 pt-2 sm:pt-0">
           {ctasElement}
           {socialProofElement}
         </Reveal>
-
-        <div className={cn('mx-auto w-full mt-12 sm:mt-16 md:mt-20 lg:mt-24', vs.fan)}>{mediaElement}</div>
+        <div className={cn('mx-auto w-full order-4 sm:order-4 mt-8 sm:mt-16 md:mt-20 lg:mt-24', vs.fan)}>{mediaElement}</div>
+        <Reveal
+          active={animate}
+          className={cn(
+            'flex w-full max-w-2xl flex-col items-center order-5 sm:hidden mt-16',
+            vs.header,
+          )}
+        >
+          {/* We only want this on mobile, below the image */}
+          {descriptionElement}
+        </Reveal>
       </motion.div>
     </section>
   )

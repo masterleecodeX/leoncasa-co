@@ -1,8 +1,8 @@
 export const siteConfig = {
   hero: {
-    title: 'Discover beautifully crafted',
-    titleLine2Prefix: 'premium modern',
-    titleHighlight: 'Furniture',
+    title: 'LeonCasa & Co.',
+    titleLine2Prefix: 'When Furniture Meets',
+    titleHighlight: 'Art',
     description:
       'Explore our curated collection of high-quality, hand-selected furniture pieces designed to elevate your living spaces.',
     socialProof: '',
